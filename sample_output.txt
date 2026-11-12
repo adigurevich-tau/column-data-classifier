@@ -1,0 +1,51 @@
+File: sample_employees.csv
+Columns: 16
+
+Column "employee_id" -> Not classified
+  Reason: None of the 4 non-empty values matched any of the 6 patterns (e.g. '1001', '1002', '1003').
+
+Column "full_name" -> Person Name  [confidence: High]
+  Reason: 4 of 4 non-empty values look like person names (known first/last name, not a city or job-title word) (100%). Header "full_name" matches this class.
+
+Column "email" -> Email Address  [confidence: High]
+  Reason: 4 of 4 non-empty values are syntactically valid email addresses (100%). Header "email" matches this class.
+
+Column "phone" -> Phone Number  [confidence: High]
+  Reason: 4 of 4 non-empty values are phone numbers (formatted US/NANP with valid area/exchange digits, +country-code, or local 0-prefixed) (100%). Header "phone" matches this class.
+
+Column "ssn" -> National ID (US SSN)  [confidence: High]
+  Reason: 4 of 4 non-empty values are valid SSNs (NNN-NN-NNNN; area not 000/666/9xx, group not 00, serial not 0000) (100%). Header "ssn" matches this class.
+
+Column "dob" -> Date of Birth  [confidence: High]
+  Reason: 4 of 4 non-empty values are valid calendar dates implying an age of 0-120 (100%). Header "dob" matches this class.
+
+Column "city" -> City  [confidence: High]
+  Reason: 4 of 4 non-empty values are in the city gazetteer (100%). Header "city" matches this class.
+
+Column "state" -> Not classified
+  Reason: None of the 4 non-empty values matched any of the 6 patterns (e.g. 'NY', 'CA', 'TX').
+
+Column "gender" -> Not classified
+  Reason: None of the 4 non-empty values matched any of the 6 patterns (e.g. 'F', 'M', 'Female').
+
+Column "title" -> Not classified
+  Reason: None of the 4 non-empty values matched any of the 6 patterns (e.g. 'Data Analyst', 'Sales Engineer', 'Product Manager').
+
+Column "department" -> Not classified
+  Reason: None of the 4 non-empty values matched any of the 6 patterns (e.g. 'R&D', 'Sales', 'Product').
+
+Column "annual_salary" -> Not classified
+  Reason: None of the 4 non-empty values matched any of the 6 patterns (e.g. '96000', '124000', '118000').
+
+Column "bank_account" -> Not classified
+  Reason: None of the 4 non-empty values matched any of the 6 patterns (e.g. '021000021-4455667788', '121000358-9988776655', '111000025-1122334455').
+
+Column "start_date" -> Not classified
+  Reason: No class met its rule. Closest: Date of Birth - header word(s) ['start'] indicate a different kind of date.
+
+Column "field_12" -> Not classified
+  Reason: None of the 4 non-empty values matched any of the 6 patterns (e.g. '2024-12-3100', '1113-12-2443', '2022-08-1201'). Note: 4/4 values are date-shaped but are not valid calendar dates (e.g. '2024-12-3100').
+
+Column "notes" -> Not classified
+  Reason: None of the 3 non-empty values matched any of the 6 patterns (e.g. 'Moved to the data team in 2023', 'Prefers email', 'On parental leave until May').
+

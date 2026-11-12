@@ -1,0 +1,40 @@
+# One or more cities per line, comma separated. Case-insensitive. Edit freely - no code change needed.
+new york, los angeles, chicago, houston, phoenix, philadelphia, san antonio, san diego, dallas, san jose
+austin, jacksonville, fort worth, columbus, san francisco, charlotte, indianapolis, seattle, denver, washington
+boston, el paso, nashville, detroit, oklahoma city, portland, las vegas, memphis, louisville, baltimore
+milwaukee, albuquerque, tucson, fresno, sacramento, kansas city, mesa, atlanta, omaha, colorado springs
+raleigh, miami, long beach, virginia beach, oakland, minneapolis, tulsa, tampa, arlington, new orleans
+wichita, cleveland, bakersfield, aurora, anaheim, honolulu, santa ana, riverside, corpus christi, lexington
+stockton, st. louis, saint louis, saint paul, st. paul, henderson, pittsburgh, cincinnati, anchorage, greensboro
+plano, newark, lincoln, orlando, irvine, toledo, jersey city, chula vista, durham, fort wayne
+st. petersburg, laredo, buffalo, madison, lubbock, chandler, scottsdale, reno, glendale, norfolk
+winston-salem, north las vegas, irving, chesapeake, gilbert, hialeah, garland, fremont, richmond, boise
+baton rouge, des moines, spokane, san bernardino, modesto, tacoma, fontana, santa clara, birmingham, oxnard
+rochester, salt lake city, providence, hartford, albany, syracuse, little rock, charleston, savannah, ann arbor
+palo alto, mountain view, sunnyvale, cambridge, berkeley, santa monica, pasadena, boulder, eugene, salem
+toronto, montreal, vancouver, calgary, edmonton, ottawa, winnipeg, quebec city, halifax, victoria
+mexico city, guadalajara, monterrey, havana, san juan, panama city, bogota, medellin, lima, santiago
+buenos aires, sao paulo, rio de janeiro, brasilia, salvador, caracas, quito, montevideo, la paz, asuncion
+london, manchester, liverpool, leeds, sheffield, bristol, edinburgh, glasgow, cardiff, belfast
+newcastle, nottingham, leicester, southampton, brighton, oxford, dublin, cork, galway, limerick
+paris, marseille, lyon, toulouse, nice, nantes, strasbourg, bordeaux, lille, montpellier
+berlin, hamburg, munich, cologne, frankfurt, stuttgart, dusseldorf, dortmund, essen, leipzig, dresden, hanover
+madrid, barcelona, valencia, seville, zaragoza, malaga, bilbao, lisbon, porto, faro
+rome, milan, naples, turin, palermo, genoa, bologna, florence, venice, verona
+amsterdam, rotterdam, the hague, utrecht, eindhoven, brussels, antwerp, ghent, bruges, luxembourg
+zurich, geneva, basel, bern, lausanne, vienna, salzburg, graz, innsbruck, prague, brno
+warsaw, krakow, gdansk, wroclaw, poznan, budapest, bucharest, sofia, belgrade, zagreb
+ljubljana, bratislava, athens, thessaloniki, istanbul, ankara, izmir, kyiv, kiev, minsk
+moscow, saint petersburg, st petersburg, novosibirsk, riga, tallinn, vilnius, helsinki, stockholm, gothenburg
+malmo, oslo, bergen, copenhagen, aarhus, reykjavik
+tel aviv, tel aviv-yafo, jerusalem, haifa, beer sheva, be'er sheva, beersheba, rishon lezion, petah tikva, ashdod
+netanya, holon, bnei brak, ramat gan, herzliya, kfar saba, raanana, ra'anana, rehovot, eilat, nazareth, tiberias, modiin, hadera
+dubai, abu dhabi, doha, riyadh, jeddah, kuwait city, manama, muscat, amman, beirut
+cairo, alexandria, casablanca, rabat, marrakesh, tunis, algiers, tripoli, lagos, abuja
+nairobi, addis ababa, accra, dakar, johannesburg, cape town, durban, pretoria, kampala, dar es salaam
+tehran, baghdad, karachi, lahore, islamabad, delhi, new delhi, mumbai, bangalore, bengaluru
+hyderabad, chennai, kolkata, pune, ahmedabad, jaipur, dhaka, colombo, kathmandu, kabul
+beijing, shanghai, guangzhou, shenzhen, chengdu, wuhan, hong kong, macau, taipei, seoul
+busan, tokyo, osaka, kyoto, yokohama, nagoya, sapporo, fukuoka, bangkok, hanoi
+ho chi minh city, saigon, phnom penh, manila, jakarta, surabaya, kuala lumpur, singapore, yangon, ulaanbaatar
+sydney, melbourne, brisbane, perth, adelaide, canberra, hobart, auckland, wellington, christchurch

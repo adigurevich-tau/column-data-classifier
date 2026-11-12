@@ -1,0 +1,34 @@
+# Common given names (lowercase on load). Comma separated; extend as needed.
+james, john, robert, michael, william, david, richard, joseph, thomas, charles, christopher, daniel, matthew, anthony, mark
+donald, steven, paul, andrew, joshua, kenneth, kevin, brian, george, timothy, ronald, edward, jason, jeffrey, ryan
+jacob, gary, nicholas, eric, jonathan, stephen, larry, justin, scott, brandon, benjamin, samuel, gregory, alexander, frank
+patrick, raymond, jack, dennis, jerry, tyler, aaron, jose, adam, nathan, henry, zachary, douglas, peter, kyle
+noah, ethan, jeremy, walter, christian, keith, roger, terry, austin, sean, gerald, carl, harold, dylan, arthur
+lawrence, jordan, jesse, bryan, billy, bruce, gabriel, joe, logan, alan, juan, albert, willie, elijah, wayne
+randy, vincent, mason, roy, ralph, bobby, russell, bradley, philip, eugene, luis, carlos, diego, miguel, pedro
+mary, patricia, jennifer, linda, elizabeth, barbara, susan, jessica, sarah, karen, lisa, nancy, betty, margaret, sandra
+ashley, kimberly, emily, donna, michelle, carol, amanda, dorothy, melissa, deborah, stephanie, rebecca, sharon, laura, cynthia
+kathleen, amy, angela, shirley, anna, brenda, pamela, emma, nicole, helen, samantha, katherine, christine, debra, rachel
+carolyn, janet, catherine, maria, heather, diane, ruth, julie, olivia, joyce, virginia, victoria, kelly, lauren, christina
+joan, evelyn, judith, megan, andrea, cheryl, hannah, jacqueline, martha, gloria, teresa, ann, sara, madison, frances
+kathryn, janice, jean, abigail, alice, julia, judy, sophia, grace, denise, amber, doris, marilyn, danielle, beverly
+isabella, theresa, diana, natalie, brittany, charlotte, marie, kayla, alexis, lori, ana, carmen, rosa, lucia, sofia
+mia, ella, chloe, lily, zoe, nora, ava, leah, claire, hazel, stella, lucy, ruby, aria, layla
+liam, lucas, oliver, leo, max, felix, oscar, hugo, theo, finn, jonas, lukas, marco, luca, matteo
+anders, lars, sven, erik, johan, pierre, jean, luc, antoine, louis, jacques, francois, hans, klaus, stefan
+ivan, dmitri, dmitry, sergei, alexei, nikolai, vladimir, boris, yuri, olga, natasha, tatiana, svetlana, irina, elena
+wei, li, ming, jun, hiroshi, takeshi, kenji, yuki, sakura, akira, haruto, min, jin, hyun, soo
+raj, amit, rahul, rohit, vikram, arjun, priya, anjali, neha, pooja, sunita, deepak, sanjay, anil, ravi
+mohammed, muhammad, ahmed, ali, omar, hassan, hussein, ibrahim, khalid, youssef, fatima, aisha, layla, mariam, noor
+adi, avi, yael, noam, shira, tamar, itai, eitan, omer, ori, roni, gal, lior, maya, michal
+yossi, moshe, shlomo, dana, noa, tal, nir, amir, guy, ido, ofir, yonatan, rotem, eli, uri
+oluwaseun, chinedu, ngozi, amara, kwame, kofi, ama, thabo, sipho, zanele, tariq, samir, nadia, leila, farah
+sergio, javier, fernando, rafael, alejandro, ricardo, manuel, jorge, antonio, francisco, andres, pablo, isabel, lucia, valentina
+giovanni, giuseppe, paolo, roberto, alessandro, francesca, chiara, giulia, elisa, sabrina, monica, silvia, paula, claudia, andrea
+aiden, jackson, liam, caleb, owen, wyatt, landon, carter, ian, evan, cole, blake, grant, chase, seth
+brooke, paige, kendra, tessa, tara, vera, wendy, yvonne, zara, bianca, cassandra, delilah, eleanor, fiona, gemma
+alan, alex, alexa, allison, amelia, april, ariana, audrey, bella, bethany, brianna, camila, cara, celeste, daisy
+dean, derek, devin, dominic, donovan, dustin, edwin, elliot, emmett, ezra, felipe, glenn, harry, howard, hunter
+jared, jay, jerome, jim, joel, jon, julian, kai, lance, leon, leonard, lewis, malcolm, marcus, martin
+neil, nelson, nolan, oscar, phil, quentin, reid, rick, rob, ron, ross, simon, stanley, todd, tony
+trevor, troy, victor, warren, wesley, xavier, zane
