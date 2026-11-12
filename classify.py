@@ -7,7 +7,7 @@ Usage:
     python classify.py file.csv --json     # machine-readable
     python classify.py file.csv -v         # also show every candidate class and why it lost
 
-Design (see NOTE.md for the longer version)
+Design (see README.md for the longer version)
 -------------------------------------------
 For every column we run one detector per data class over the non-empty values.
 A detector gives each value a level:
