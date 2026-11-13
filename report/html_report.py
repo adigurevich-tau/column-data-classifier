@@ -82,11 +82,11 @@ def render_report(results, source_name, rows_evaluated):
         tag = escape(str(item.get("data_class") or "Not classified"))
         overview_rows.append(f"<tr><td>{column_name}</td><td>{tag}</td></tr>")
     overview_table = (
-        '<section aria-label="Column classification summary">'
-        '<h2>Column classification summary</h2>'
+        '<details class="overview-section">'
+        '<summary>Column classification summary</summary>'
         '<div class="table-wrap"><table>'
         '<thead><tr><th>Column name</th><th>Tag</th></tr></thead>'
-        '<tbody>' + "".join(overview_rows) + '</tbody></table></div></section>'
+        '<tbody>' + "".join(overview_rows) + '</tbody></table></div></details>'
     )
 
     category_text = ", ".join(escape(str(name)) for name in categories) if categories else "None"
