@@ -49,7 +49,6 @@ No third-party packages are required.
 ```text
 .
 ├── main.py
-├── classify.py
 ├── detectors/
 │   ├── __init__.py
 │   ├── ssn.py
@@ -57,25 +56,54 @@ No third-party packages are required.
 │   ├── phone_number.py
 │   ├── date_of_birth.py
 │   ├── city.py
-│   └── person_name.py
+│   ├── person_name.py
+│   ├── us_state.py
+│   └── employment_position.py
+├── report/
+│   └── html_report.py
 ├── data/
 │   ├── cities.txt
 │   ├── first_names.txt
-│   └── surnames.txt
+│   ├── surnames.txt
+│   ├── us_states.txt
+│   └── employment_positions.txt
 └── tests/
-    └── test_classify.py
+    ├── test_classify.py
+    └── test_html_report.py
 ```
 
 ## Detection order
 
 1. US Social Security Number
-2. Email
+2. Email Address
 3. Phone Number
 4. Date of Birth
-5. City
-6. Person Name
+5. US State
+6. Employment Position
+7. City
+8. Person Name
 
-City and Person Name intentionally run last.
+City and Person Name intentionally run last because their patterns are broader.
+The US State and Employment Position reference lists can be edited in
+`data/us_states.txt` and `data/employment_positions.txt`.
+
+## HTML report
+
+After each successful CSV analysis, the program creates a standalone HTML report
+beside the input file. For example, `sample_employees.csv` produces
+`sample_employees_report.html`. The report includes summary statistics, a card for
+each column, confidence, match rates, and expandable candidate-check details.
+
+For privacy, the HTML report does **not** include CSV cell values or sample records.
+It contains column headers and aggregate classification information only. The
+original CSV is not changed. The terminal results and optional `--json` output
+continue to work as before.
+
+Run all tests with:
+
+```bash
+python3 -m unittest discover -s tests -v
+```
 
 ## Rules
 
