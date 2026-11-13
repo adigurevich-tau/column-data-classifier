@@ -21,10 +21,17 @@ details{border:1px solid var(--line);border-radius:10px;background:var(--card);p
 <header class="intro"><div class="eyebrow">Data tagging · CSV column classifier</div><h1>Column Classification Rules</h1><p class="muted">A deterministic, rule-based tool that examines CSV columns and assigns one of eight data categories, or leaves a column unclassified.</p></header>
 <div class="tabs" role="tablist" aria-label="Main sections">
 <button class="tab" role="tab" id="tab-overview" aria-controls="panel-overview" aria-selected="true">Overview</button>
-<button class="tab" role="tab" id="tab-rules" aria-controls="panel-rules" aria-selected="false">Classification rules</button>
-<button class="tab" role="tab" id="tab-workflow" aria-controls="panel-workflow" aria-selected="false">How to run</button>
+<button class="tab" role="tab" id="tab-rules" aria-controls="panel-rules" aria-selected="false">Class rules</button>
+<button class="tab" role="tab" id="tab-workflow" aria-controls="panel-workflow" aria-selected="false">Example output</button>
 </div>
-<section class="panel" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview"></section>
+<section class="panel" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
+<div class="section-head"><h2>Overview</h2><p>Short summary of the solution. The sections below are placeholders to fill in together.</p></div>
+<div class="grid">
+<div class="card"><h3>How to run your program</h3><p class="muted">To be filled in.</p></div>
+<div class="card"><h3>Your approach</h3><p class="muted">Approach, in a few sentences — to be filled in.</p><p class="muted">Other options considered — to be filled in.</p></div>
+<div class="card"><h3>Results and next steps</h3><p class="muted">What works well — to be filled in.</p><p class="muted">What does not — to be filled in.</p><p class="muted">What you would do next with more time — to be filled in.</p></div>
+</div>
+</section>
 <section class="panel" id="panel-rules" role="tabpanel" aria-labelledby="tab-rules" hidden>
 <h2>How classification works</h2>
 <p>Each non-empty cell is checked against each detector. A column receives a category only when it meets both the mandatory and supplemental requirements.</p>
@@ -32,40 +39,55 @@ details{border:1px solid var(--line);border-radius:10px;background:var(--card);p
 <div class="card"><h3>Mandatory threshold</h3><p class="tag">At least 95%</p><p>At least 95% of non-empty values in the column must pass that category's mandatory detector.</p></div>
 <div class="card"><h3>Supplemental threshold</h3><p class="tag">At least 5% and at least one match</p><p>At least one value must also provide supplemental evidence, and the supplemental match rate must be at least 5%.</p></div>
 </div>
-<div class="card"><h3>Supplemental evidence by category</h3>
-<table><thead><tr><th>Category</th><th>What counts as supplemental evidence</th></tr></thead><tbody>
-<tr><td>National ID (US SSN)</td><td>Standard 3-2-4 separator format, or area number at or below 772. The area-number check is supplemental, not a mandatory validity rule.</td></tr>
-<tr><td>Email Address</td><td>A valid-looking alphabetic top-level domain of at least two letters.</td></tr>
-<tr><td>Phone Number</td><td>A leading international prefix (+ or 00), or a recognized US-style formatted number.</td></tr>
-<tr><td>Date of Birth</td><td>A plausible age from 0 to 120, or a recognized DOB column header. Non-DOB date headers block this classification.</td></tr>
-<tr><td>US State</td><td>Value matches an entry in the editable US states reference list.</td></tr>
-<tr><td>Employment Position</td><td>Value matches an entry in the editable employment positions reference list.</td></tr>
-<tr><td>City</td><td>Value matches an entry in the editable city reference list.</td></tr>
-<tr><td>Person Name</td><td>Known first and last name components, or surname-first format such as <code>Burks, Rosella</code>.</td></tr>
-</tbody></table></div>
 <h2>Detector order</h2><div class="card"><ol>
 <li>National ID (US SSN)</li><li>Email Address</li><li>Phone Number</li><li>Date of Birth</li><li>US State</li><li>Employment Position</li><li>City</li><li>Person Name</li>
 </ol><p class="muted">Specific categories run before broader categories such as City and Person Name. If multiple categories pass, the classifier selects the one with the highest mandatory match rate, then the highest supplemental match rate. Detector order resolves a remaining tie.</p></div>
 <h2>Rules for each category</h2>
-<details><summary>1. National ID (US SSN)</summary><ul><li>Accepts a string or non-negative integer containing exactly nine digits.</li><li>Digits may be contiguous or grouped 3-2-4 with consistent hyphens or spaces.</li><li>Area cannot be 000, 666, or 900–999; group cannot be 00; serial cannot be 0000.</li><li>The 772 area limit is supplemental only.</li></ul></details>
-<details><summary>2. Email Address</summary><ul><li>Requires exactly one @ and non-empty local and domain parts.</li><li>No whitespace, leading/trailing dot or consecutive dots in the local part.</li><li>Domain must have at least two non-empty labels; labels cannot begin or end with a hyphen.</li><li>A conventional alphabetic TLD is supplemental evidence. No DNS or mailbox check is performed.</li></ul></details>
-<details><summary>3. Phone Number</summary><ul><li>Accepts strings or non-negative integers. Main number must contain 7–15 digits.</li><li>Allowed main-number characters are digits, spaces, hyphens, parentheses, and an optional + at the beginning.</li><li>Recognizes optional extensions written as <code>x3819</code>, <code>ext 3819</code>, <code>ext. 3819</code>, or <code>extension 3819</code>. Extension length is 1–6 digits and is not counted as part of the main number.</li><li>Date-shaped strings are explicitly rejected to reduce confusion with date columns.</li><li>Recognizes US-style formatting as supplemental evidence; a prefix beginning + or 00 is also supplemental evidence.</li><li>Formatting checks do not establish that a number is assigned or reachable.</li></ul></details>
-<details><summary>4. Date of Birth</summary><ul><li>Accepts actual calendar dates in <code>YYYY-MM-DD</code>, <code>DD/MM/YYYY</code>, <code>MM/DD/YYYY</code>, or <code>DD-MM-YYYY</code> format.</li><li>Supplemental evidence is a plausible age from 0 to 120, or a recognized DOB header: <code>dob</code>, <code>date_of_birth</code>, <code>birth_date</code>, <code>birthdate</code>, <code>date_birth</code>.</li><li>Known non-DOB date headers such as <code>start_date</code>, <code>hire_date</code>, <code>termination_date</code>, <code>end_date</code>, <code>created_at</code>, and <code>updated_at</code> block DOB classification.</li></ul></details>
-<details><summary>5. US State</summary><ul><li>Matches a US state name or USPS two-letter abbreviation, case-insensitively.</li><li>The editable reference list is <code>data/us_states.txt</code>.</li></ul></details>
-<details><summary>6. Employment Position</summary><ul><li>Matches a normalized job title from the editable reference list.</li><li>Normalization ignores case and treats punctuation or other separators as spaces.</li><li>The reference list is <code>data/employment_positions.txt</code>.</li></ul></details>
-<details><summary>7. City</summary><ul><li>Must start with a letter and contain 1–4 words.</li><li>Allowed characters are letters, spaces, periods, and apostrophes.</li><li>Must be all uppercase, all lowercase, or title case.</li><li>Matching <code>data/cities.txt</code> provides supplemental evidence.</li></ul></details>
-<details><summary>8. Person Name</summary><ul><li>Accepts 1–5 words made from letters, spaces, hyphens, apostrophes, and periods.</li><li>Must have consistent uppercase, lowercase, or title case; leading/trailing or repeated spaces are rejected.</li><li>Rejects placeholders such as Unknown, Anonymous, N/A, and Test User.</li><li>Supports both given-name-first and surname-first forms, including <code>Burks, Rosella</code>.</li><li>First-name and surname reference lists provide supplemental evidence.</li></ul></details>
-<div class="callout"><strong>Important:</strong> The classifier identifies values that fit defined patterns and reference data. It does not prove that a value is genuine, belongs to a particular person, or is currently in use.</div>
+<details><summary>1. National ID (US SSN)</summary>
+<h4>Mandatory checks</h4><ul><li>String or non-negative integer containing exactly nine digits.</li><li>Digits are contiguous or grouped 3-2-4 with consistent hyphens or spaces.</li><li>Area is not 000, 666, or 900–999; group is not 00; serial is not 0000.</li></ul>
+<h4>Supplemental checks</h4><ul><li>Standard 3-2-4 separator format.</li><li>Area number is at or below 772. This is a supplemental hint only, not a validity rule.</li></ul>
+</details>
+<details><summary>2. Email Address</summary>
+<h4>Mandatory checks</h4><ul><li>Exactly one @, with non-empty local and domain parts.</li><li>No whitespace or invalid characters; local part does not start/end with a dot or contain consecutive dots.</li><li>Domain has at least two non-empty labels; labels do not begin or end with a hyphen.</li></ul>
+<h4>Supplemental checks</h4><ul><li>Top-level domain is alphabetic and at least two letters long.</li><li>No DNS lookup or mailbox/reachability check is performed.</li></ul>
+</details>
+<details><summary>3. Phone Number</summary>
+<h4>Mandatory checks</h4><ul><li>String or non-negative integer; main phone number contains 7–15 digits.</li><li>Main number uses only digits, spaces, hyphens, parentheses, and an optional + at the beginning.</li><li>Optional extension formats: x3819, ext 3819, ext. 3819, or extension 3819. Extension has 1–6 digits and is excluded from the main-number digit count.</li><li>Date-shaped values are rejected; plus signs may appear only once and only at the beginning.</li></ul>
+<h4>Supplemental checks</h4><ul><li>Starts with + or 00 (international-prefix hint), or matches the recognized US-style format.</li><li>Format matching does not verify that a number is assigned or reachable.</li></ul>
+</details>
+<details><summary>4. Date of Birth</summary>
+<h4>Mandatory checks</h4><ul><li>An actual calendar date in YYYY-MM-DD, DD/MM/YYYY, MM/DD/YYYY, or DD-MM-YYYY format.</li><li>Invalid calendar dates and unsupported formats do not pass.</li></ul>
+<h4>Supplemental checks</h4><ul><li>Age implied by the date is between 0 and 120, inclusive; or the header is one of dob, date_of_birth, birth_date, birthdate, date_birth.</li><li>Known non-DOB headers (including start_date, hire_date, termination_date, end_date, created_at, updated_at, and joining_date) block DOB classification.</li></ul>
+</details>
+<details><summary>5. US State</summary>
+<h4>Mandatory checks</h4><ul><li>Value matches a US state name or USPS two-letter abbreviation, case-insensitively.</li><li>Leading or trailing whitespace is not accepted.</li></ul>
+<h4>Supplemental checks</h4><ul><li>Value is present in the editable data/us_states.txt reference list.</li></ul>
+</details>
+<details><summary>6. Employment Position</summary>
+<h4>Mandatory checks</h4><ul><li>Value matches a normalized job title from the employment-position detector list.</li><li>Leading or trailing whitespace and empty values are rejected.</li></ul>
+<h4>Supplemental checks</h4><ul><li>Value matches an entry in data/employment_positions.txt. Matching ignores case and normalizes punctuation/separators.</li></ul>
+</details>
+<details><summary>7. City</summary>
+<h4>Mandatory checks</h4><ul><li>One to four words; starts with a letter and has at least two characters.</li><li>Only letters, spaces, periods, and apostrophes are allowed.</li><li>Capitalization is all uppercase, all lowercase, or title case.</li></ul>
+<h4>Supplemental checks</h4><ul><li>Value matches an entry in the editable data/cities.txt reference list.</li></ul>
+</details>
+<details><summary>8. Person Name</summary>
+<h4>Mandatory checks</h4><ul><li>String with 1–5 words, using letters, spaces, hyphens, apostrophes, or periods.</li><li>No leading/trailing whitespace or repeated spaces; capitalization is all uppercase, all lowercase, or title case.</li><li>Rejects placeholders: Unknown, Anonymous, N/A, and Test User.</li><li>Supports given-name-first and surname-first formats, such as Rosella Burks and Burks, Rosella.</li></ul>
+<h4>Supplemental checks</h4><ul><li>Both first-name and surname components match the reference dictionaries; or the value uses the accepted surname-first comma format.</li><li>Reference dictionaries are data/first_names.txt and data/surnames.txt.</li></ul>
+</details>
+
 </section>
 <section class="panel" id="panel-workflow" role="tabpanel" aria-labelledby="tab-workflow" hidden>
-<h2>Run the classifier</h2><p>Clone the repository and open a terminal in the project directory.</p>
+<h2>Example output</h2><p class="muted">Placeholder until we add a representative output example.</p>
+<div class="card"><h3>CSV classification results</h3><p class="muted">Example output will be added here.</p></div>
+<h2>How to run the classifier</h2><p>Clone the repository and open a terminal in the project directory.</p>
 <pre>git clone https://github.com/adigurevich-tau/column-data-classifier.git
 cd column-data-classifier
 python3 main.py</pre>
 <p>The program asks for the CSV file path. You can also pass the path directly:</p><pre>python3 main.py sample_employees.csv
 python3 main.py sample_employees.csv --verbose
 python3 main.py sample_employees.csv --json</pre>
-<p>To inspect all rows instead of the default maximum of 100,000:</p><pre>python3 main.py sample_employees.csv --max-rows 0</pre>
+
 <h2>Tests</h2><pre>python3 -m unittest discover -s tests -v</pre>
 <h2>Project structure</h2><pre>column-data-classifier/
 ├── main.py
