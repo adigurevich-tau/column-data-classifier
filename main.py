@@ -17,21 +17,30 @@ import json
 import sys
 from pathlib import Path
 
-from detectors import ssn, email, phone_number, date_of_birth, city, person_name
+from detectors import ssn, email, phone_number, date_of_birth, city, person_name, us_state, employment_position
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 MANDATORY_COLUMN_THRESHOLD = 0.95
 NULL_VALUES = {"", "null", "none", "n/a", "na", "nan", "nil", "-", "--", "?", "undefined", "unknown"}
 
-# City and Person Name intentionally run last.
+# Specific categories run before broad categories such as City and Person Name.
 DETECTORS = [
     ("National ID (US SSN)", ssn.detect),
     ("Email Address", email.detect),
     ("Phone Number", phone_number.detect),
     ("Date of Birth", date_of_birth.detect),
+    ("US State", us_state.detect),
+    ("Employment Position", employment_position.detect),
     ("City", city.detect),
     ("Person Name", person_name.detect),
 ]
+
+DOB_HEADERS = {"dob", "date_of_birth", "birth_date", "birthdate", "date_birth"}
+NON_DOB_DATE_HEADERS = {
+    "start_date", "hire_date", "employment_start", "employment_start_date",
+    "termination_date", "end_date", "created_at", "updated_at",
+    "date_created", "date_updated", "joining_date",
+}
 
 
 class Resources:
@@ -42,6 +51,8 @@ class Resources:
         self.cities = self._load_set("cities.txt")
         self.first_names = self._load_set("first_names.txt")
         self.surnames = self._load_set("surnames.txt")
+        self.us_states = self._load_set("us_states.txt")
+        self.employment_positions = self._load_set("employment_positions.txt")
 
     @staticmethod
     def _load_set(filename):
@@ -55,7 +66,7 @@ class Resources:
         return values
 
 
-def supplemental_result(category, value, details, resources):
+def supplemental_result(category, value, details, resources, header=""):
     """Return whether optional evidence supports a mandatory match."""
     if category == "National ID (US SSN)":
         return bool(details.get("formatted") or details.get("area_at_or_below_772"))
@@ -64,7 +75,14 @@ def supplemental_result(category, value, details, resources):
     if category == "Phone Number":
         return bool(details.get("has_country_prefix") or details.get("formatted_us_number"))
     if category == "Date of Birth":
-        return bool(details.get("plausible_birth_age"))
+        normalized_header = header.strip().lower().replace(" ", "_").replace("-", "_")
+        if normalized_header in NON_DOB_DATE_HEADERS:
+            return False
+        return bool(details.get("plausible_birth_age") or normalized_header in DOB_HEADERS)
+    if category == "US State":
+        return bool(details.get("known_us_state"))
+    if category == "Employment Position":
+        return bool(details.get("known_employment_position"))
     if category == "City":
         return bool(details.get("known_city"))
     if category == "Person Name":
@@ -96,7 +114,7 @@ def classify_column(header, raw_values, resources=None):
             valid, details = detector(value, resources)
             if valid:
                 mandatory += 1
-                if supplemental_result(category, value, details, resources):
+                if supplemental_result(category, value, details, resources, header):
                     supplemental += 1
         mandatory_rate = mandatory / len(values)
         supplemental_rate = supplemental / len(values)
@@ -170,7 +188,7 @@ def read_csv(path, max_rows=100000):
 
 def ask_for_csv_path():
     print("\nWelcome to the Column Data Classifier!")
-    print("This tool checks CSV columns for six data categories.")
+    print("This tool checks CSV columns for eight data categories.")
     print("Your CSV is read locally by this program; it is not uploaded.\n")
     while True:
         try:
@@ -225,7 +243,7 @@ def print_results(results, file_name, verbose=False):
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="Classify CSV columns into six data categories.")
+    parser = argparse.ArgumentParser(description="Classify CSV columns into eight data categories.")
     parser.add_argument("csv_path", nargs="?", help="path to a CSV file; omit it for interactive mode")
     parser.add_argument("--json", action="store_true", help="print JSON output")
     parser.add_argument("--verbose", "-v", action="store_true", help="include per-category match rates")
