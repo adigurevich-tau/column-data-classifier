@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the six column detectors and classify CSV columns.
+"""Run the eight column detectors and classify CSV columns.
 
 Run interactively:
     python main.py
