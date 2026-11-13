@@ -29,7 +29,12 @@ class DetectorTests(unittest.TestCase):
     def test_phone_rules(self):
         for value in ("123-456-7890", "+972 (50) 123-4567", "1234567", 1234567890):
             self.assertTrue(phone_number.detect(value, self.resources)[0])
-        for value in ("123456", "1234567890123456", "12+3456789", "++1234567", "123-ABC-7890", -1234567):
+        for value in ("857-790-7181x349", "331-892-8037x349", "001-795-896-4482x3819",
+                      "857-790-7181 ext 349", "857-790-7181 extension 349"):
+            self.assertTrue(phone_number.detect(value, self.resources)[0])
+        self.assertTrue(phone_number.detect("857-790-7181x349", self.resources)[1]["has_extension"])
+        for value in ("123456", "1234567890123456", "12+3456789", "++1234567", "123-ABC-7890",
+                      "857-790-7181x", "857-790-7181x1234567", -1234567):
             self.assertFalse(phone_number.detect(value, self.resources)[0])
 
     def test_dob_rules(self):
