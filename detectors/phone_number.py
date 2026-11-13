@@ -17,8 +17,13 @@ def detect(value, resources=None):
         value = str(value)
     if not isinstance(value, str) or not _ALLOWED.fullmatch(value):
         return False, {}
-    # Date-shaped 4-2-4 digit strings are not accepted as phone numbers.
-    if re.fullmatch(r"\d{4}-\d{2}-\d{4}", value.strip()):
+    # Date-shaped strings are not accepted as phone numbers.
+    stripped = value.strip()
+    if (
+        re.fullmatch(r"\d{4}-\d{2}-\d{2}", stripped)
+        or re.fullmatch(r"\d{4}-\d{2}-\d{4}", stripped)
+        or re.fullmatch(r"\d{2}[/-]\d{2}[/-]\d{4}", stripped)
+    ):
         return False, {}
     if value.count("+") > 1 or ("+" in value and not value.startswith("+")):
         return False, {}
