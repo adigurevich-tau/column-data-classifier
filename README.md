@@ -1,52 +1,86 @@
-# Sensitive-data column classifier - note
+# Sensitive-data column classifier
 
-## How to run
-    python3 classify.py sample_employees.csv          # text report (Python 3.8+, standard library only, nothing to install)
-    python3 classify.py file.csv --json               # JSON
-    python3 classify.py file.csv -v                   # also shows every candidate class and why it was accepted/rejected
-    python3 tests/test_classify.py                    # 40 edge-case checks
-Results on the sample file: `sample_output.txt`.
+A deterministic, standard-library-only CSV column classifier. Each category has its
+own detector module under `detectors/`; `main.py` runs the checks in a fixed order.
 
-## Approach
-Deterministic rules, one detector per class, evidence printed for every decision.
-* Each value gets a level per class: STRONG (fits + passes validity checks), WEAK (right shape but ambiguous),
-  or NO. Examples: SSN follows SSA rules (area not 000/666/9xx, group not 00, serial not 0000); phones need valid
-  NANP digits or +country-code; dates must be real calendar dates implying age 0-120; cities come from a gazetteer
-  (`data/cities.txt`); names need a known first/last name (`data/first_names.txt`, `surnames.txt`) and must not be
-  a city or job-title word.
-* Column decision = fixed rule table on s (share STRONG) and the header hint:
-  no hint -> need s >= 90% (80% for city/name, whose lists are incomplete);
-  hint -> s >= 60%, or shape-only >= 80% (Low confidence). **A header alone never classifies a column**, and WEAK
-  matches (9 bare digits, unknown capitalised words) count only when the header agrees.
-* Extra plausibility rule for DOB without a birth-related header: ages must be 18-100 with spread, and header words
-  like start/hire/created veto it. That is why `start_date` is not DOB and `field_12` (impossible dates such as
-  `2024-12-3100`) is not classified.
-* Output: class, confidence (High/Medium/Low), and a reason with counts, header evidence, non-matching examples,
-  and for unclassified columns the closest class and why it missed. SSN examples are masked.
-* Gazetteers are plain text files: extend them without touching code. Handles delimiter sniffing, utf-8/cp1252,
-  ragged rows, null-like placeholders.
+## Run
 
-## Options considered
-* Sending columns to an LLM: rejected - not explainable/reproducible, cost and privacy on thousands of files.
-* Presidio/spaCy NER or a trained classifier: good for names/cities in free text, but needs labelled data or heavy
-  dependencies, and is harder to explain per column. Candidate for a later hybrid for names/cities only.
-* Header-name matching only: trivial but wrong on renamed columns (`field_12`) and misleading ones; used only as a booster.
-* Checksum-style validation: SSNs have none, so structural rules are used.
+```bash
+python3 main.py sample_employees.csv
+python3 main.py sample_employees.csv --json
+python3 main.py sample_employees.csv --verbose
+python3 tests/test_classify.py
+```
 
-## What works / what doesn't
-Works: structured identifiers (SSN, email, phone, formatted dates) are precise; ambiguity is resolved explicitly
-(bare digits, state codes, start vs birth dates, multiword cities vs names).
-Known weaknesses:
-* Names/cities depend on gazetteer coverage -> false negatives for uncommon names/small towns when the header is
-  uninformative (they only classify with a hint, at Low confidence).
-* Single-word names that are also cities (Jordan, Austin) are only claimed with a header hint.
-* Job titles/departments/products made of surnames ("Baker Street Cafe", "Carter Sales") can false-positive as names.
-* Mixed columns (e.g. 70% emails, rest junk, no header) are rejected by the 90% threshold; ambiguous DD/MM vs MM/DD is ignored for DOB.
-* Non-US phone formats are only partly covered; non-US national IDs are intentionally out of scope.
-* Head sampling (first 100k rows) can be biased on sorted files; the whole column is not scanned.
+The original `classify.py` command remains as a compatibility entry point and delegates
+to `main.py`. No third-party packages are required.
 
-## Next steps
-1. Build a labelled set of columns, measure per-class precision/recall on thousands of files, and tune thresholds from data, not intuition.
-2. Replace gazetteers with larger sources (GeoNames, name frequency lists) and add fuzzy/accents handling.
-3. Add cross-column context (a `state` column beside `city`, `first`+`last` pairs) and value-uniqueness signals.
-4. Log every false positive/negative from reviews into regression tests.
+## Project layout
+
+```text
+.
+├── main.py
+├── classify.py
+├── detectors/
+│   ├── __init__.py
+│   ├── ssn.py
+│   ├── email.py
+│   ├── phone_number.py
+│   ├── date_of_birth.py
+│   ├── city.py
+│   └── person_name.py
+├── data/
+│   ├── cities.txt
+│   ├── first_names.txt
+│   └── surnames.txt
+└── tests/
+    └── test_classify.py
+```
+
+## Detection order
+
+1. US Social Security Number
+2. Email
+3. Phone Number
+4. Date of Birth
+5. City
+6. Person Name
+
+City and Person Name intentionally run last, as requested.
+
+## Rules
+
+Each detector enforces the agreed mandatory value-level checks. Reference lists and
+format-specific hints are supplemental evidence; they do not replace mandatory checks.
+
+- **SSN:** string or unsigned integer; exactly nine digits, either contiguous or in
+  consistent 3-2-4 groups separated by hyphens/spaces; area not 000, 666, or 900-999;
+  group not 00; serial not 0000. The 772 area ceiling is recorded only as supplemental
+  evidence, not as a validity condition.
+- **Email:** one @, non-empty local/domain parts, no leading/trailing/consecutive dots
+  in the local part, no whitespace or invalid characters, and a domain with at least
+  two non-empty labels. A valid-looking TLD is supplemental.
+- **Phone:** string or unsigned integer; 7-15 digits after removing allowed spaces,
+  hyphens, and parentheses; optional plus only at the beginning; no other characters.
+  Country-specific numbering checks are supplemental and are not fully implemented.
+- **Date of Birth:** string/date/datetime in one of the agreed four-digit-year formats;
+  real calendar date with valid month/day components. A plausible age (0-120) is
+  supplemental evidence.
+- **City:** 1-4 words, starts with a letter, at least two characters, letters/spaces/
+  periods/apostrophes only, and all uppercase, all lowercase, or title case. The city
+  gazetteer is supplemental evidence.
+- **Person Name:** 1-5 words, at least two characters, letters/spaces/hyphens/
+  apostrophes/periods only, no leading/trailing/repeated spaces, consistent uppercase,
+  lowercase, or title case, and not a known placeholder. First-name and surname
+  dictionaries, multiple name components, city exclusion, and generic/job-title
+  exclusions are supplemental signals.
+
+## Column decision
+
+The current configurable default is **95% mandatory matches** among non-empty values.
+Supplemental match rates are reported separately and contribute to confidence; they
+do not override a failed mandatory check. This threshold is an implementation default,
+not a statistically calibrated value. Tune it against a labelled validation set before
+using the classifier for consequential decisions.
+
+The gazetteer files are plain text and can be extended without changing detector code.
