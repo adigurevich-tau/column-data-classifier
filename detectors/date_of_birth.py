@@ -3,7 +3,7 @@ import datetime as dt
 import re
 
 _FORMATS = ("%Y-%m-%d", "%d/%m/%Y", "%m/%d/%Y", "%d-%m-%Y")
-_YEAR4 = re.compile(r"^(?:\\d{4}-\\d{2}-\\d{2}|\\d{2}/\\d{2}/\\d{4}|\\d{4}/\\d{2}/\\d{2}|\\d{2}-\\d{2}-\\d{4})$")
+_YEAR4 = re.compile(r"^(?:\d{4}-\d{2}-\d{2}|\d{2}/\d{2}/\d{4}|\d{4}/\d{2}/\d{2}|\d{2}-\d{2}-\d{4})$")
 
 
 def parse(value):
