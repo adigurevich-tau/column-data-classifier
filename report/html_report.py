@@ -20,7 +20,7 @@ def _candidate_rows(candidates):
             f"<td>{escape(str(candidate.get('data_class', 'Unknown')))}</td>"
             f"<td>{_percent(candidate.get('mandatory_rate', 0))}</td>"
             f"<td>{_percent(candidate.get('supplemental_rate', 0))}</td>"
-            f"<td><span class=\\"check-status {status_class}\\">{status}</span></td>"
+            f'<td><span class="check-status {status_class}">{status}</span></td>'
             "</tr>"
         )
     return (
