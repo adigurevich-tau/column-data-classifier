@@ -88,7 +88,10 @@ def supplemental_result(category, value, details, resources, header=""):
     if category == "City":
         return bool(details.get("known_city"))
     if category == "Person Name":
-        return bool(details.get("known_first_name") and details.get("known_last_name"))
+        return bool(
+            details.get("known_first_name") and details.get("known_last_name")
+            or details.get("surname_first_format")
+        )
     return False
 
 
