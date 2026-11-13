@@ -1,7 +1,11 @@
-"""Phone number checks using the agreed general structural rules."""
+"""Phone number checks using general structural rules and US-format evidence."""
 import re
 
-_ALLOWED = re.compile(r"^\+?[0-9 ()-]+$")
+_ALLOWED = re.compile(r"^\\+?[0-9 ().-]+$")
+_US_FORMAT = re.compile(
+    r"^(?:\\+?1[ .-]?)?(?:\\([2-9]\\d{2}\\)|[2-9]\\d{2})"
+    r"[ .-]?[2-9]\\d{2}[ .-]?\\d{4}$"
+)
 
 
 def detect(value, resources=None):
@@ -15,7 +19,11 @@ def detect(value, resources=None):
         return False, {}
     if value.count("+") > 1 or ("+" in value and not value.startswith("+")):
         return False, {}
-    digits = re.sub(r"\D", "", value)
+    digits = re.sub(r"\\D", "", value)
     if not 7 <= len(digits) <= 15:
         return False, {}
-    return True, {"digit_count": len(digits), "has_country_prefix": value.startswith("+")}
+    return True, {
+        "digit_count": len(digits),
+        "has_country_prefix": value.startswith("+"),
+        "formatted_us_number": bool(_US_FORMAT.fullmatch(value.strip())),
+    }
