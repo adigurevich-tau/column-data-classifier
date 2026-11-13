@@ -132,7 +132,7 @@ footer {{ margin-top:24px; color:var(--muted); font-size:12px; }}
 </head>
 <body><main>
 <header><div><h1>Column classification report</h1><p class="muted">{escape(str(source_name))}</p></div><div class="generated">Generated {escape(generated)}</div></header>
-<section class="summary" aria-label="Summary">
+{overview_table}\n<section class="summary" aria-label="Summary">
 <div class="stat"><strong>{total:,}</strong><span>Total columns</span></div>
 <div class="stat"><strong>{classified:,}</strong><span>Classified</span></div>
 <div class="stat"><strong>{unclassified:,}</strong><span>Not classified</span></div>
