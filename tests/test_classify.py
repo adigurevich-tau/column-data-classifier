@@ -47,8 +47,19 @@ class DetectorTests(unittest.TestCase):
     def test_person_name_rules(self):
         for value in ("Emily Carter", "JANE DOE", "john smith", "Anne-Marie O'Neil"):
             self.assertTrue(person_name.detect(value, self.resources)[0])
-        for value in ("Unknown", "Anonymous", "N/A", "Test User", "A", "John  Smith", "John_ Smith"):
+        self.assertTrue(person_name.detect("Burks, Rosella", self.resources)[0])
+        self.assertTrue(person_name.detect("Smith, John", self.resources)[0])
+        for value in ("Unknown", "Anonymous", "N/A", "Test User", "A", "John  Smith", "John_ Smith",
+                      "Burks,, Rosella", ", Rosella", "Burks, "):
             self.assertFalse(person_name.detect(value, self.resources)[0])
+
+    def test_surname_first_column_classification(self):
+        result = main.classify_column(
+            "person_name",
+            ["Burks, Rosella", "Miller, Ava", "Davis, Noah"],
+            self.resources,
+        )
+        self.assertEqual(result["data_class"], "Person Name")
 
     def test_column_threshold_and_order(self):
         result = main.classify_column("email", ["a@example.com", "b@example.org", "c@example.net"], self.resources)
