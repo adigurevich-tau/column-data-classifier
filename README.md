@@ -3,17 +3,46 @@
 A deterministic, standard-library-only CSV column classifier. Each category has its
 own detector module under `detectors/`; `main.py` runs the checks in a fixed order.
 
-## Run
+## Quick start
+
+Clone the repository and enter the project folder:
 
 ```bash
-python3 main.py sample_employees.csv
-python3 main.py sample_employees.csv --json
-python3 main.py sample_employees.csv --verbose
-python3 tests/test_classify.py
+git clone https://github.com/adigurevich-tau/column-data-classifier.git
+cd column-data-classifier
 ```
 
-The original `classify.py` command remains as a compatibility entry point and delegates
-to `main.py`. No third-party packages are required.
+Run the interactive program:
+
+```bash
+python main.py
+```
+
+If your system uses `python3` instead:
+
+```bash
+python3 main.py
+```
+
+The program welcomes you and asks for the path to your CSV file. You can type the
+path or drag the file into the terminal. The CSV is read locally and is not uploaded
+or modified.
+
+You can also provide the path directly:
+
+```bash
+python main.py sample_employees.csv
+python main.py sample_employees.csv --verbose
+python main.py sample_employees.csv --json
+```
+
+Run the tests with:
+
+```bash
+python tests/test_classify.py
+```
+
+No third-party packages are required.
 
 ## Project layout
 
@@ -46,7 +75,7 @@ to `main.py`. No third-party packages are required.
 5. City
 6. Person Name
 
-City and Person Name intentionally run last, as requested.
+City and Person Name intentionally run last.
 
 ## Rules
 
@@ -78,9 +107,7 @@ format-specific hints are supplemental evidence; they do not replace mandatory c
 ## Column decision
 
 The current configurable default is **95% mandatory matches** among non-empty values.
-Supplemental match rates are reported separately and contribute to confidence; they
-do not override a failed mandatory check. This threshold is an implementation default,
+Supplemental match rates are reported separately and contribute to confidence; they do
+not override a failed mandatory check. This threshold is an implementation default,
 not a statistically calibrated value. Tune it against a labelled validation set before
 using the classifier for consequential decisions.
-
-The gazetteer files are plain text and can be extended without changing detector code.
