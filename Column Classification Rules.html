@@ -1,394 +1,114 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<meta name="claude:viewport-fit-sides" content="cover">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Column Classification Rules</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;600;700&display=swap">
 <style>
-/* Layout: header, three main tabs (Overview, Class rules, Example output). Class rules holds the shared pipeline plus one inner tab per data class. */
-:root {
-  --bg: #f4f6f9;
-  --surface: #ffffff;
-  --surface-2: #edf0f6;
-  --ink: #16202e;
-  --muted: #586577;
-  --line: #d9dfe8;
-  --accent: #2b50e0;
-  --accent-soft: #e4e9fc;
-  --ok: #12805c;
-  --ok-soft: #dcf3ea;
-  --warn: #8a5a00;
-  --warn-soft: #fbefd2;
-  --bad: #b4332b;
-  --bad-soft: #fbe5e2;
-  --font-display: "Space Grotesk", system-ui, sans-serif;
-  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0e141d; --surface: #161e2a; --surface-2: #1d2735; --ink: #e6ebf3; --muted: #9aa7ba;
-    --line: #2a3647; --accent: #86a0ff; --accent-soft: #232f58;
-    --ok: #4cc79a; --ok-soft: #14352b; --warn: #f0c36a; --warn-soft: #3a2f14; --bad: #ff8f85; --bad-soft: #432220;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0e141d; --surface: #161e2a; --surface-2: #1d2735; --ink: #e6ebf3; --muted: #9aa7ba;
-  --line: #2a3647; --accent: #86a0ff; --accent-soft: #232f58;
-  --ok: #4cc79a; --ok-soft: #14352b; --warn: #f0c36a; --warn-soft: #3a2f14; --bad: #ff8f85; --bad-soft: #432220;
-  color-scheme: dark;
-}
-* { box-sizing: border-box; }
-body {
-  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.55;
-  padding-block: 40px 72px;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
-}
-.wrap { max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
-h1, h2, h3, h4 { font-family: var(--font-display); text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
-h1 { font-size: clamp(28px, 4.4vw, 40px); line-height: 1.1; font-weight: 700; }
-h2 { font-size: 22px; font-weight: 600; }
-h3 { font-size: 17px; font-weight: 600; }
-h4 { font-size: 15px; font-weight: 600; }
-p { margin: 0; }
-code, .mono { font-family: var(--font-mono); font-size: 0.88em; }
-.label { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
-.muted { color: var(--muted); }
-.note { color: var(--muted); font-size: 14px; }
-.head { display: flex; flex-direction: column; gap: 12px; max-width: 70ch; }
-.head p { color: var(--muted); font-size: 16px; }
-.section { display: flex; flex-direction: column; gap: 18px; }
-.section-head { display: flex; flex-direction: column; gap: 4px; max-width: 70ch; }
-.section-head p { color: var(--muted); }
-
-/* tabs */
-.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: thin; }
-.tab {
-  all: unset; box-sizing: border-box; cursor: pointer; padding: 10px 14px; font-weight: 500; font-size: 14px;
-  color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap;
-}
-.tab:hover { color: var(--ink); }
-.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
-.tab:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 4px; }
-.tabs.main .tab { font-family: var(--font-display); font-size: 16px; font-weight: 600; padding: 12px 18px; }
-.tabpanel { display: flex; flex-direction: column; gap: 18px; padding-top: 22px; min-width: 0; }
-.tabpanel[hidden] { display: none; }
-
-.pill {
-  display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
-  border-radius: 4px; padding: 2px 7px; white-space: nowrap;
-}
-.pill.strong { background: var(--ok-soft); color: var(--ok); }
-.pill.weak { background: var(--warn-soft); color: var(--warn); }
-.pill.no { background: var(--bad-soft); color: var(--bad); }
-.pill.neutral { background: var(--surface-2); color: var(--muted); }
-.pill.accent { background: var(--accent-soft); color: var(--accent); }
-
-.panel {
-  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px;
-  display: flex; flex-direction: column; gap: 14px; min-width: 0;
-}
-.cols2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 16px; align-items: start; }
-.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 16px; }
-.step-top { display: flex; align-items: center; gap: 12px; }
-.num {
-  flex: none; width: 28px; height: 28px; border-radius: 6px; background: var(--ink); color: var(--bg);
-  font-family: var(--font-mono); font-size: 13px; display: grid; place-items: center;
-}
-.panel p strong { font-weight: 600; }
-.formula {
-  font-family: var(--font-mono); font-size: 13px; background: var(--surface-2); border-radius: 6px;
-  padding: 10px 12px; overflow-x: auto; white-space: nowrap;
-}
-.chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chip { display: inline-block; font-family: var(--font-mono); font-size: 12.5px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px; }
-.chip.fixed { color: var(--muted); }
-.bullets { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
-.bullets li::marker { color: var(--muted); }
-.panel-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.stat-row { display: flex; gap: 6px 28px; flex-wrap: wrap; font-variant-numeric: tabular-nums; }
-.stat-row div { display: flex; flex-direction: column; }
-.stat-row b { font-family: var(--font-display); font-size: 20px; font-weight: 600; }
-.table-scroll { overflow-x: auto; }
-table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
-th { text-align: left; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; padding: 6px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
-td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; font-variant-numeric: tabular-nums; }
-td.nw { white-space: nowrap; }
-
-/* overview placeholders */
-.ph-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 16px; }
-.ph { border-style: dashed; }
-.ph-body { background: var(--surface-2); border-radius: 8px; padding: 14px; color: var(--muted); font-size: 14px; min-height: 96px; }
-.ph-sub { display: flex; flex-direction: column; gap: 6px; }
-
-/* output placeholder */
-.out {
-  font-family: var(--font-mono); font-size: 13px; background: var(--surface-2); border: 1px dashed var(--line);
-  border-radius: 8px; padding: 18px; color: var(--muted); overflow-x: auto; white-space: pre; min-height: 220px;
-}
-.file-row { display: flex; gap: 8px 16px; flex-wrap: wrap; align-items: center; }
+:root{color-scheme:light;--bg:#f4f6f9;--card:#fff;--ink:#182333;--muted:#5d6878;--line:#dce2ea;--accent:#3155cf;--soft:#e9edfc;--good:#167653}
+*{box-sizing:border-box}body{margin:0;padding:32px 18px 64px;background:var(--bg);color:var(--ink);font:15px/1.6 system-ui,-apple-system,sans-serif}
+main{max-width:1050px;margin:auto}.intro{margin-bottom:24px}.eyebrow{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.1em;font-weight:700}h1,h2,h3{line-height:1.2}h1{font-size:clamp(28px,4vw,40px);margin:8px 0}h2{font-size:23px;margin:0 0 8px}h3{font-size:17px;margin:0 0 8px}p{margin:7px 0}.muted{color:var(--muted)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow:auto}.tab{border:0;background:none;padding:12px 16px;font:600 15px system-ui;color:var(--muted);white-space:nowrap;cursor:pointer;border-bottom:3px solid transparent}.tab[aria-selected=true]{color:var(--ink);border-color:var(--accent)}.panel[hidden]{display:none}.panel{padding-top:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:19px;margin:14px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:14px}.tag{display:inline-block;background:var(--soft);color:var(--accent);border-radius:5px;padding:2px 8px;font-size:12px;font-weight:700}
+code,pre{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}code{background:#eef1f6;padding:2px 5px;border-radius:4px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f0f2f6;padding:14px;border-radius:8px}
+ul,ol{padding-left:22px;margin:8px 0}li{margin:5px 0}table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}th,td{text-align:left;vertical-align:top;padding:9px;border-bottom:1px solid var(--line)}th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+details{border:1px solid var(--line);border-radius:10px;background:var(--card);padding:13px 16px;margin:10px 0}summary{cursor:pointer;font-weight:700} .callout{border-left:4px solid var(--accent);padding:10px 14px;background:var(--soft);border-radius:5px}
+@media(prefers-color-scheme:dark){:root{color-scheme:dark;--bg:#101722;--card:#182231;--ink:#e8edf5;--muted:#a5b0c0;--line:#303d50;--accent:#9aafff;--soft:#252f4c}code,pre{background:#222d3c}}
 </style>
-
-<div class="wrap">
-  <header class="head">
-    <span class="label">Data tagging · column classifier</span>
-    <h1>Column Classification Rules</h1>
-    <p>A rule-based classifier that tags each CSV column as one of six sensitive data classes, or leaves it unclassified, and explains every decision.</p>
-  </header>
-
-  <div>
-    <div class="tabs main" role="tablist" aria-label="Sections" id="mainTabs"></div>
-    <div id="mainPanels"></div>
-  </div>
+</head>
+<body>
+<main>
+<header class="intro"><div class="eyebrow">Data tagging · CSV column classifier</div><h1>Column Classification Rules</h1><p class="muted">A deterministic, rule-based tool that examines CSV columns and assigns one of eight data categories, or leaves a column unclassified.</p></header>
+<div class="tabs" role="tablist" aria-label="Main sections">
+<button class="tab" role="tab" id="tab-overview" aria-controls="panel-overview" aria-selected="true">Overview</button>
+<button class="tab" role="tab" id="tab-rules" aria-controls="panel-rules" aria-selected="false">Classification rules</button>
+<button class="tab" role="tab" id="tab-workflow" aria-controls="panel-workflow" aria-selected="false">How to run</button>
 </div>
-
+<section class="panel" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview"></section>
+<section class="panel" id="panel-rules" role="tabpanel" aria-labelledby="tab-rules" hidden>
+<h2>How classification works</h2>
+<p>Each non-empty cell is checked against each detector. A column receives a category only when it meets both the mandatory and supplemental requirements.</p>
+<div class="grid">
+<div class="card"><h3>Mandatory threshold</h3><p class="tag">At least 95%</p><p>At least 95% of non-empty values in the column must pass that category's mandatory detector.</p></div>
+<div class="card"><h3>Supplemental threshold</h3><p class="tag">At least 5% and at least one match</p><p>At least one value must also provide supplemental evidence, and the supplemental match rate must be at least 5%.</p></div>
+</div>
+<div class="card"><h3>Supplemental evidence by category</h3>
+<table><thead><tr><th>Category</th><th>What counts as supplemental evidence</th></tr></thead><tbody>
+<tr><td>National ID (US SSN)</td><td>Standard 3-2-4 separator format, or area number at or below 772. The area-number check is supplemental, not a mandatory validity rule.</td></tr>
+<tr><td>Email Address</td><td>A valid-looking alphabetic top-level domain of at least two letters.</td></tr>
+<tr><td>Phone Number</td><td>A leading international prefix (+ or 00), or a recognized US-style formatted number.</td></tr>
+<tr><td>Date of Birth</td><td>A plausible age from 0 to 120, or a recognized DOB column header. Non-DOB date headers block this classification.</td></tr>
+<tr><td>US State</td><td>Value matches an entry in the editable US states reference list.</td></tr>
+<tr><td>Employment Position</td><td>Value matches an entry in the editable employment positions reference list.</td></tr>
+<tr><td>City</td><td>Value matches an entry in the editable city reference list.</td></tr>
+<tr><td>Person Name</td><td>Known first and last name components, or surname-first format such as <code>Burks, Rosella</code>.</td></tr>
+</tbody></table></div>
+<h2>Detector order</h2><div class="card"><ol>
+<li>National ID (US SSN)</li><li>Email Address</li><li>Phone Number</li><li>Date of Birth</li><li>US State</li><li>Employment Position</li><li>City</li><li>Person Name</li>
+</ol><p class="muted">Specific categories run before broader categories such as City and Person Name. If multiple categories pass, the classifier selects the one with the highest mandatory match rate, then the highest supplemental match rate. Detector order resolves a remaining tie.</p></div>
+<h2>Rules for each category</h2>
+<details><summary>1. National ID (US SSN)</summary><ul><li>Accepts a string or non-negative integer containing exactly nine digits.</li><li>Digits may be contiguous or grouped 3-2-4 with consistent hyphens or spaces.</li><li>Area cannot be 000, 666, or 900–999; group cannot be 00; serial cannot be 0000.</li><li>The 772 area limit is supplemental only.</li></ul></details>
+<details><summary>2. Email Address</summary><ul><li>Requires exactly one @ and non-empty local and domain parts.</li><li>No whitespace, leading/trailing dot or consecutive dots in the local part.</li><li>Domain must have at least two non-empty labels; labels cannot begin or end with a hyphen.</li><li>A conventional alphabetic TLD is supplemental evidence. No DNS or mailbox check is performed.</li></ul></details>
+<details><summary>3. Phone Number</summary><ul><li>Accepts strings or non-negative integers. Main number must contain 7–15 digits.</li><li>Allowed main-number characters are digits, spaces, hyphens, parentheses, and an optional + at the beginning.</li><li>Recognizes optional extensions written as <code>x3819</code>, <code>ext 3819</code>, <code>ext. 3819</code>, or <code>extension 3819</code>. Extension length is 1–6 digits and is not counted as part of the main number.</li><li>Date-shaped strings are explicitly rejected to reduce confusion with date columns.</li><li>Recognizes US-style formatting as supplemental evidence; a prefix beginning + or 00 is also supplemental evidence.</li><li>Formatting checks do not establish that a number is assigned or reachable.</li></ul></details>
+<details><summary>4. Date of Birth</summary><ul><li>Accepts actual calendar dates in <code>YYYY-MM-DD</code>, <code>DD/MM/YYYY</code>, <code>MM/DD/YYYY</code>, or <code>DD-MM-YYYY</code> format.</li><li>Supplemental evidence is a plausible age from 0 to 120, or a recognized DOB header: <code>dob</code>, <code>date_of_birth</code>, <code>birth_date</code>, <code>birthdate</code>, <code>date_birth</code>.</li><li>Known non-DOB date headers such as <code>start_date</code>, <code>hire_date</code>, <code>termination_date</code>, <code>end_date</code>, <code>created_at</code>, and <code>updated_at</code> block DOB classification.</li></ul></details>
+<details><summary>5. US State</summary><ul><li>Matches a US state name or USPS two-letter abbreviation, case-insensitively.</li><li>The editable reference list is <code>data/us_states.txt</code>.</li></ul></details>
+<details><summary>6. Employment Position</summary><ul><li>Matches a normalized job title from the editable reference list.</li><li>Normalization ignores case and treats punctuation or other separators as spaces.</li><li>The reference list is <code>data/employment_positions.txt</code>.</li></ul></details>
+<details><summary>7. City</summary><ul><li>Must start with a letter and contain 1–4 words.</li><li>Allowed characters are letters, spaces, periods, and apostrophes.</li><li>Must be all uppercase, all lowercase, or title case.</li><li>Matching <code>data/cities.txt</code> provides supplemental evidence.</li></ul></details>
+<details><summary>8. Person Name</summary><ul><li>Accepts 1–5 words made from letters, spaces, hyphens, apostrophes, and periods.</li><li>Must have consistent uppercase, lowercase, or title case; leading/trailing or repeated spaces are rejected.</li><li>Rejects placeholders such as Unknown, Anonymous, N/A, and Test User.</li><li>Supports both given-name-first and surname-first forms, including <code>Burks, Rosella</code>.</li><li>First-name and surname reference lists provide supplemental evidence.</li></ul></details>
+<div class="callout"><strong>Important:</strong> The classifier identifies values that fit defined patterns and reference data. It does not prove that a value is genuine, belongs to a particular person, or is currently in use.</div>
+</section>
+<section class="panel" id="panel-workflow" role="tabpanel" aria-labelledby="tab-workflow" hidden>
+<h2>Run the classifier</h2><p>Clone the repository and open a terminal in the project directory.</p>
+<pre>git clone https://github.com/adigurevich-tau/column-data-classifier.git
+cd column-data-classifier
+python3 main.py</pre>
+<p>The program asks for the CSV file path. You can also pass the path directly:</p><pre>python3 main.py sample_employees.csv
+python3 main.py sample_employees.csv --verbose
+python3 main.py sample_employees.csv --json</pre>
+<p>To inspect all rows instead of the default maximum of 100,000:</p><pre>python3 main.py sample_employees.csv --max-rows 0</pre>
+<h2>Tests</h2><pre>python3 -m unittest discover -s tests -v</pre>
+<h2>Project structure</h2><pre>column-data-classifier/
+├── main.py
+├── detectors/
+│   ├── ssn.py
+│   ├── email.py
+│   ├── phone_number.py
+│   ├── date_of_birth.py
+│   ├── us_state.py
+│   ├── employment_position.py
+│   ├── city.py
+│   └── person_name.py
+├── report/
+│   └── html_report.py
+├── data/
+│   ├── cities.txt
+│   ├── first_names.txt
+│   ├── surnames.txt
+│   ├── us_states.txt
+│   └── employment_positions.txt
+└── tests/
+    ├── test_classify.py
+    └── test_html_report.py</pre>
+<h2>Generated HTML report and privacy</h2><p>After a successful analysis, the program writes a standalone report beside the source CSV. For example, <code>sample_employees.csv</code> produces <code>sample_employees_report.html</code>.</p><ul><li>Summary cards show total columns, classified columns, unclassified columns, and rows evaluated.</li><li>A collapsible column summary lists each column name and its assigned tag.</li><li>Individual column cards show category, confidence, mandatory and supplemental match rates, non-empty row count, explanation, and expandable candidate checks.</li><li>The report does not include CSV cell values or sample records.</li><li>The original CSV is read locally and is not modified or uploaded by the program.</li></ul>
+<p class="muted">No third-party Python packages are required; the project uses the Python standard library.</p>
+</section>
+</main>
 <script>
-(function () {
-  var esc = function (s) {
-    return String(s).replace(/[&<>"']/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
-    });
-  };
-  function bullets(items) { return '<ul class="bullets">' + items.map(function (x) { return '<li>' + x + '</li>'; }).join("") + '</ul>'; }
-  function table(head, rows, nowrap) {
-    return '<div class="table-scroll"><table><thead><tr>' + head.map(function (h) { return '<th>' + esc(h) + '</th>'; }).join("") +
-      '</tr></thead><tbody>' + rows.map(function (r) {
-        return '<tr>' + r.map(function (c, i) { return '<td' + (nowrap && nowrap.indexOf(i) !== -1 ? ' class="nw"' : '') + '>' + c + '</td>'; }).join("") + '</tr>';
-      }).join("") + '</tbody></table></div>';
-  }
-  var S = '<span class="pill strong">Strong</span>', W = '<span class="pill weak">Weak</span>', N = '<span class="pill no">No</span>';
-  function c(t) { return '<code>' + esc(t) + '</code>'; }
-
-  var nullList = ["null", "none", "n/a", "na", "nan", "nil", "-", "--", "?", "undefined", "unknown"];
-
-  /* ---------- Tab 1: Overview ---------- */
-  var overview = '' +
-    '<div class="section-head"><h2>Overview</h2><p>Short summary of the solution. The three sections below are placeholders to fill in together.</p></div>' +
-    '<div class="ph-grid">' +
-      '<div class="panel ph"><div class="panel-head"><h3>How to run your program</h3><span class="pill neutral">Placeholder</span></div><div class="ph-body">To be filled in.</div></div>' +
-      '<div class="panel ph"><div class="panel-head"><h3>Your approach</h3><span class="pill neutral">Placeholder</span></div>' +
-        '<div class="ph-sub"><span class="label">Approach, in a few sentences</span><div class="ph-body">To be filled in.</div>' +
-        '<span class="label">Other options considered</span><div class="ph-body">To be filled in.</div></div></div>' +
-      '<div class="panel ph"><div class="panel-head"><h3>Results and next steps</h3><span class="pill neutral">Placeholder</span></div>' +
-        '<div class="ph-sub"><span class="label">What works well</span><div class="ph-body">To be filled in.</div>' +
-        '<span class="label">What does not</span><div class="ph-body">To be filled in.</div>' +
-        '<span class="label">What you would do next with more time</span><div class="ph-body">To be filled in.</div></div></div>' +
-    '</div>';
-
-  /* ---------- Tab 2: Class rules ---------- */
-  var shared = '' +
-    '<div class="section-head"><h2>Rules shared by all classes</h2><p>Every column goes through the same steps, in this order.</p></div>' +
-    '<div class="steps">' +
-      '<article class="panel"><div class="step-top"><span class="num">1</span><h3>Set nulls aside</h3></div>' +
-        '<p>Values are trimmed first. An empty cell, or any value below (ignoring capitals), is null: it is not scored and not counted. A column with no non-null values is Not classified.</p>' +
-        '<div class="chips"><span class="chip fixed">empty cell</span>' + nullList.map(function (v) { return '<span class="chip">' + esc(v) + '</span>'; }).join("") + '</div></article>' +
-      '<article class="panel"><div class="step-top"><span class="num">2</span><h3>Give each value a level</h3></div>' +
-        '<p>Each class has a detector that returns one of three levels for every non-null value.</p>' +
-        table(["Level", "Meaning"], [
-          [S, "The value fits the class and passes its validity checks, for example a valid SSN or a known city."],
-          [W, "The value has the right shape but is ambiguous on its own, for example 9 bare digits or an unknown capitalised word. Only counted when the header also points at the class."],
-          [N, "The value does not fit the class."]
-        ], [0]) + '</article>' +
-      '<article class="panel"><div class="step-top"><span class="num">3</span><h3>Compute the column numbers</h3></div>' +
-        '<p>Two shares are taken over the non-null values, plus one yes/no flag for the header.</p>' +
-        '<div class="formula">s = strong ÷ non-null<br>w = (strong + weak) ÷ non-null</div>' +
-        '<p><strong>Header hint:</strong> does the column name point at the class? Each class has its own list of header words (see its tab).</p></article>' +
-      '<article class="panel"><div class="step-top"><span class="num">4</span><h3>Apply the decision table</h3></div>' +
-        table(["Header hint", "Rule", "Confidence"], [
-          ["No", "s ≥ class threshold", "High if s ≥ 95%, else Medium"],
-          ["Yes", "s ≥ 60%", "High if s ≥ 90%, else Medium"],
-          ["Yes", "otherwise w ≥ 80%, with at least one weak value", "Low"]
-        ], [0]) +
-        '<p class="note">Class thresholds: 90% for National ID, Email, Phone and Date of Birth; 80% for City and Person Name. Date of Birth adds one more check when the header gives no hint.</p></article>' +
-      '<article class="panel"><div class="step-top"><span class="num">5</span><h3>Pick one class per column</h3></div>' +
-        '<p>If several classes pass, the winner is chosen by, in order: header hint, confidence, then strong share <code>s</code>. The class list order is the last tie-break. The classes that also passed are named in the reason, so nothing is hidden. If no class passes, the column is Not classified and the reason names the closest class and why it failed.</p></article>' +
-      '<article class="panel"><div class="step-top"><span class="num">6</span><h3>Report per column</h3></div>' +
-        bullets([
-          '<strong>Result:</strong> the class and its confidence, or Not classified.',
-          '<strong>Reason:</strong> how many values matched, how many weak values were counted, whether the header matched, and up to 3 non-matching examples.',
-          '<strong>Examples:</strong> up to 3 distinct values from the column.',
-          '<strong>Verbose mode (-v):</strong> every candidate class with its strong and weak counts and why it lost.'
-        ]) + '</article>' +
-    '</div>' +
-    '<div class="panel"><h3>Global guards</h3>' + bullets([
-      'A header hint alone never classifies a column. The values must agree.',
-      'Weak values are ignored unless the header hints at the class.',
-      'Fewer than 3 non-null values forces the confidence to Low.',
-      'Non-matching examples and shown examples are masked for National ID.',
-      'Everything is deterministic. No network, no machine learning, standard library only. Name lists and the city list are plain text files that can be edited without changing code.'
-    ]) + '</div>';
-
-  var classes = [
-    { id: "ssn", tab: "National ID", name: "National ID (US SSN)", thr: "90%",
-      levels: [
-        [S, "Matches NNN-NN-NNNN with a consistent separator (hyphen or space) and passes the SSA rules below."],
-        [W, "Nine bare digits that pass the SSA rules. Could be any ID, so they need a header hint."],
-        [N, "Anything else, or any value that breaks an SSA rule."]
-      ],
-      checks: ["Area is not 000, 666 or 900-999.", "Group is not 00.", "Serial is not 0000.", "If a separator is used, the same one appears in both positions."],
-      hint: "The header contains the word ssn, or its joined form contains socialsecurity, socsec, nationalid or taxpayerid.",
-      notes: ["Bare 9-digit values are never classified without a header hint.", "Examples and non-matching values are masked (all digits except the last 4 become *)."] },
-    { id: "email", tab: "Email", name: "Email Address", thr: "90%",
-      levels: [
-        [S, "A syntactically valid address: allowed characters before the @, a domain, and a final part of 2 or more letters. No two dots in a row."],
-        [W, "This class has no weak level."],
-        [N, "Anything else."]
-      ],
-      checks: ["Local part uses letters, digits and . _ % + ' -", "Domain uses letters, digits, hyphens and dots.", "Ends in a dot plus at least 2 letters.", "Contains no \"..\"."],
-      hint: "The header contains the word mail, or its joined form contains email.",
-      notes: ["With no weak level, a header hint only lowers the bar from 90% to 60% strong."] },
-    { id: "phone", tab: "Phone", name: "Phone Number", thr: "90%",
-      levels: [
-        [S, "A formatted number in one of three families: US/NANP with brackets, separators or a + sign; international with a + and 8-15 digits; or local with a leading 0 and a separator."],
-        [W, "Bare digits that fit the US or local-0 pattern, for example 5551234567."],
-        [N, "Anything else."]
-      ],
-      checks: [
-        "US/NANP: optional +1 or 1, a 3-digit area code (bare or in brackets), a 3-digit exchange, 4 digits, and an optional extension (x or ext). Area code and exchange must start with 2-9. If they do not, the other two families are tried.",
-        "International: starts with +, a country code, and 8-15 digits in total.",
-        "Local with trunk 0: a leading 0, then 1-2 digits, 3 digits, and 3-4 digits (for example 050-123-4567 or 03-123-4567)."
-      ],
-      hint: "The header contains one of phone, tel, telephone, mobile, cell, cellphone, fax or msisdn, or its joined form contains phone.",
-      notes: ["Bare digits are weak, so a phone column of unformatted numbers needs a phone header."] },
-    { id: "dob", tab: "Date of Birth", name: "Date of Birth", thr: "90%",
-      levels: [
-        [S, "A real calendar date in an unambiguous format, implying an age of 0-120 as of today."],
-        [W, "A real date with a 2-digit year, or bare digits (YYYYMMDD), implying an age of 0-120."],
-        [N, "Not a real date, a future date, or an implied age above 120."]
-      ],
-      checks: [
-        "Strong formats: YYYY-MM-DD, YYYY/MM/DD, YYYY.MM.DD, MM/DD/YYYY, DD/MM/YYYY, MM-DD-YYYY, DD-MM-YYYY, DD.MM.YYYY, and written months such as Mar 4, 2001 or 4 March 2001.",
-        "Weak formats: MM/DD/YY, DD/MM/YY, MM-DD-YY, DD-MM-YY, DD.MM.YY and YYYYMMDD.",
-        "A date followed by a time (2001-03-04T10:30) is read as the date.",
-        "The first format that parses wins, so 03/04/2001 is read as month first."
-      ],
-      hint: "The header contains one of dob, bday, birthday, birthdate or born, or its joined form contains birth.",
-      notes: [
-        "With no header hint, dates alone are not enough. The column must also pass a plausibility check on the implied ages.",
-        "<strong>Reject by header:</strong> any header word from start, hire, hired, created, updated, modified, end, join, joined, expiry, expires, expire, due, order, signup, registration, login, last, issued, issue, effective, termination, closed, opened, purchase, transaction, event, timestamp, ts or at. The word date alone is not enough to reject.",
-        "<strong>Reject by age:</strong> fewer than 90% of the non-null values imply an age of 18-100.",
-        "<strong>Reject by spread:</strong> the implied ages vary by less than 5 years (standard deviation)."
-      ] },
-    { id: "city", tab: "City", name: "City", thr: "80%",
-      levels: [
-        [S, "Found in the city list (data/cities.txt), ignoring case. A trailing qualifier such as \", TX\" or \", France\" is removed before the lookup."],
-        [W, "Looks like a place name but is not in the list: 3-41 characters of letters, spaces and . ' ’ -, 1-4 words, starting with a capital letter."],
-        [N, "Anything else."]
-      ],
-      checks: ["The qualifier after a comma must be 2-25 letters, dots or spaces to be stripped.", "Only the first comma splits head from qualifier."],
-      hint: "The header contains one of city, town, municipality or locality.",
-      notes: [
-        "Unknown words with place-name shape are only counted under a city header, at Low confidence.",
-        "Person Name is the main competitor. Multi-word cities such as San Diego are never read as names, and single words that are both (Austin, Jordan, Victoria) are weak for Person Name."
-      ] },
-    { id: "name", tab: "Person Name", name: "Person Name", thr: "80%",
-      levels: [
-        [S, "One or more words where the first word is a known first name or the last word is a known surname (data/first_names.txt, data/surnames.txt)."],
-        [W, "Name shape with no known word: every word starts with a capital letter. A single word that is also a city is weak."],
-        [N, "Fails a rule below."]
-      ],
-      checks: [
-        "No value longer than 60 characters, and no digits, @ or _.",
-        "Multi-word values that are in the city list (San Diego, Salt Lake City) are not names.",
-        "\"Last, First\" with exactly one comma is flipped. Any other comma fails.",
-        "Leading titles (mr, mrs, ms, miss, mx, dr, prof, sir, madam, mister) and trailing suffixes (jr, sr, ii, iii, iv, phd, md, esq, dds) are dropped.",
-        "1-4 words remain, each made of letters, apostrophes, hyphens and dots.",
-        "No word is a job, department or organisation word, such as manager, engineer, analyst, director, sales, marketing, finance, support, team, inc, llc, street or university.",
-        "A single word must be at least 3 characters, which rules out state codes and initials."
-      ],
-      hint: "The header contains one of name, fullname, firstname, lastname, surname, fname, lname, forename, givenname or familyname, or its joined form contains fullname, firstname or lastname. Not a hint if the header also contains a word like company, user, file, product, department, city, state, street, title, org, account, bank, school, team, country, region, role or job.",
-      notes: ["Title-case job titles are stopped by the non-name word list, not by the city list."] }
-  ];
-
-  function classPanel(k) {
-    return '<div class="panel-head"><h3>' + esc(k.name) + '</h3><span class="pill accent">Threshold without header hint: ' + k.thr + '</span></div>' +
-      '<div class="cols2">' +
-        '<div class="panel"><h4>Value levels</h4>' + table(["Level", "Value looks like"], k.levels, [0]) +
-          '<div class="label">Detailed checks</div>' + bullets(k.checks.map(esc)) + '</div>' +
-        '<div class="panel"><h4>Column rule</h4>' +
-          '<div class="stat-row"><div><span class="label">No header hint</span><b>s ≥ ' + k.thr + '</b></div>' +
-          '<div><span class="label">Header hint</span><b>s ≥ 60%</b></div>' +
-          '<div><span class="label">Hint, weak values</span><b>w ≥ 80%</b></div></div>' +
-          '<div class="label">Header hint</div><p>' + esc(k.hint) + '</p>' +
-          '<div class="label">Specific to this class</div>' + bullets(k.notes.map(function (x) { return x.indexOf("<strong>") !== -1 ? x : esc(x); })) +
-          '<p class="note">The shared rules apply too: header alone never classifies, fewer than 3 values means Low confidence, and the tie-break order.</p></div>' +
-      '</div>';
-  }
-
-  var rules = shared + '<div class="section-head" style="margin-top:12px"><h2>Rules per class</h2><p>One tab for each of the six classes in the code.</p></div>' +
-    '<div><div class="tabs" role="tablist" aria-label="Data classes" id="classTabs"></div><div id="classPanels"></div></div>';
-
-  /* ---------- Tab 3: Example output ---------- */
-  var output = '' +
-    '<div class="section-head"><h2>Example output</h2><p>The classifier output for the example file. Placeholder until the output is provided.</p></div>' +
-    '<div class="panel ph"><div class="panel-head"><h3>sample_employees.csv</h3><span class="pill neutral">Placeholder</span></div>' +
-      '<div class="out">Output will appear here.</div></div>';
-
-  /* ---------- tab builder ---------- */
-  function build(tabsEl, panelsEl, items, prefix, onSelect) {
-    tabsEl.innerHTML = items.map(function (it) {
-      return '<button type="button" class="tab" role="tab" id="' + prefix + 'tab-' + it.id + '" aria-controls="' + prefix + 'panel-' + it.id + '" aria-selected="false" tabindex="-1" data-id="' + it.id + '">' + esc(it.tab) + '</button>';
-    }).join("");
-    panelsEl.innerHTML = items.map(function (it) {
-      return '<div class="tabpanel" role="tabpanel" id="' + prefix + 'panel-' + it.id + '" aria-labelledby="' + prefix + 'tab-' + it.id + '" hidden>' + it.html + '</div>';
-    }).join("");
-    var ids = items.map(function (i) { return i.id; });
-    function select(id, focus) {
-      if (ids.indexOf(id) === -1) id = ids[0];
-      ids.forEach(function (x) {
-        var on = x === id, t = document.getElementById(prefix + "tab-" + x);
-        t.setAttribute("aria-selected", on ? "true" : "false");
-        t.tabIndex = on ? 0 : -1;
-        document.getElementById(prefix + "panel-" + x).hidden = !on;
-        if (on && focus) t.focus();
-      });
-      if (onSelect) onSelect(id);
-    }
-    tabsEl.addEventListener("click", function (e) {
-      var b = e.target.closest(".tab"); if (b) select(b.dataset.id);
-    });
-    tabsEl.addEventListener("keydown", function (e) {
-      var a = document.activeElement, cur = ids.indexOf(a && a.dataset ? a.dataset.id : "");
-      if (cur === -1) return;
-      var n = null;
-      if (e.key === "ArrowRight") n = (cur + 1) % ids.length;
-      else if (e.key === "ArrowLeft") n = (cur - 1 + ids.length) % ids.length;
-      else if (e.key === "Home") n = 0;
-      else if (e.key === "End") n = ids.length - 1;
-      if (n === null) return;
-      e.preventDefault(); select(ids[n], true);
-    });
-    return select;
-  }
-
-  var mainItems = [
-    { id: "overview", tab: "Overview", html: overview },
-    { id: "rules", tab: "Class rules", html: rules },
-    { id: "output", tab: "Example output", html: output }
-  ];
-  var setHash = function (h) { try { if (location.hash !== "#" + h) location.hash = h; } catch (e) {} };
-  var curClass = "ssn";
-  var selMain = build(document.getElementById("mainTabs"), document.getElementById("mainPanels"), mainItems, "m-", function (id) {
-    setHash(id === "rules" ? "rules-" + curClass : id);
+(function(){
+ const tabs=[...document.querySelectorAll('[role=tab]')];
+ function activate(tab,focus){
+  tabs.forEach(t=>{const on=t===tab;t.setAttribute('aria-selected',String(on));document.getElementById(t.getAttribute('aria-controls')).hidden=!on;t.tabIndex=on?0:-1;});
+  if(focus)tab.focus();
+ }
+ tabs.forEach((tab,i)=>{
+  tab.addEventListener('click',()=>activate(tab,false));
+  tab.addEventListener('keydown',e=>{
+   let n=null;if(e.key==='ArrowRight')n=(i+1)%tabs.length;else if(e.key==='ArrowLeft')n=(i-1+tabs.length)%tabs.length;else if(e.key==='Home')n=0;else if(e.key==='End')n=tabs.length-1;
+   if(n!==null){e.preventDefault();activate(tabs[n],true);}
   });
-  var selClass = build(document.getElementById("classTabs"), document.getElementById("classPanels"),
-    classes.map(function (k) { return { id: k.id, tab: k.tab, html: classPanel(k) }; }), "c-", function (id) {
-      curClass = id;
-      if (!document.getElementById("m-panel-rules").hidden) setHash("rules-" + id);
-    });
-
-  function fromHash() {
-    var h = (location.hash || "").replace("#", "");
-    if (h.indexOf("rules-") === 0) { selMain("rules"); selClass(h.slice(6)); }
-    else if (h === "rules") { selMain("rules"); selClass("ssn"); }
-    else selMain(h);
-  }
-  window.addEventListener("hashchange", fromHash);
-  selClass("ssn");
-  fromHash();
+ });
+ activate(tabs[0],false);
 })();
 </script>
-
-</body></html>
+</body>
+</html>
