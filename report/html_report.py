@@ -76,6 +76,19 @@ def render_report(results, source_name, rows_evaluated):
             f'{details}</details></article>'
         )
 
+    overview_rows = []
+    for item in results:
+        column_name = escape(str(item.get("column", "")))
+        tag = escape(str(item.get("data_class") or "Not classified"))
+        overview_rows.append(f"<tr><td>{column_name}</td><td>{tag}</td></tr>")
+    overview_table = (
+        '<section aria-label="Column classification summary">'
+        '<h2>Column classification summary</h2>'
+        '<div class="table-wrap"><table>'
+        '<thead><tr><th>Column name</th><th>Tag</th></tr></thead>'
+        '<tbody>' + "".join(overview_rows) + '</tbody></table></div></section>'
+    )
+
     category_text = ", ".join(escape(str(name)) for name in categories) if categories else "None"
     generated = datetime.now().astimezone().strftime("%Y-%m-%d %H:%M %Z")
     return f"""<!doctype html>
