@@ -62,7 +62,7 @@ def supplemental_result(category, value, details, resources):
     if category == "Email Address":
         return bool(details.get("valid_looking_tld"))
     if category == "Phone Number":
-        return bool(details.get("has_country_prefix"))
+        return bool(details.get("has_country_prefix") or details.get("formatted_us_number"))
     if category == "Date of Birth":
         return bool(details.get("plausible_birth_age"))
     if category == "City":
