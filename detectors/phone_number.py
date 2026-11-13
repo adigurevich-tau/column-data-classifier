@@ -1,7 +1,7 @@
 """Phone number checks using the agreed general structural rules."""
 import re
 
-_ALLOWED = re.compile(r"^\\+?[0-9 ()-]+$")
+_ALLOWED = re.compile(r"^\+?[0-9 ()-]+$")
 
 
 def detect(value, resources=None):
@@ -15,7 +15,7 @@ def detect(value, resources=None):
         return False, {}
     if value.count("+") > 1 or ("+" in value and not value.startswith("+")):
         return False, {}
-    digits = re.sub(r"\\D", "", value)
+    digits = re.sub(r"\D", "", value)
     if not 7 <= len(digits) <= 15:
         return False, {}
     return True, {"digit_count": len(digits), "has_country_prefix": value.startswith("+")}
