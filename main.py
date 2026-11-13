@@ -18,6 +18,7 @@ import sys
 from pathlib import Path
 
 from detectors import ssn, email, phone_number, date_of_birth, city, person_name, us_state, employment_position
+from report.html_report import write_report
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 MANDATORY_COLUMN_THRESHOLD = 0.95
@@ -289,6 +290,13 @@ def main(argv=None):
         print(json.dumps({"file": str(path), "columns": results}, indent=2, default=str))
     else:
         print_results(results, path.name, args.verbose)
+
+    rows_evaluated = max((len(values) for values in columns), default=0)
+    try:
+        report_path = write_report(results, path, rows_evaluated)
+        print(f"HTML report saved to: {report_path}")
+    except OSError as exc:
+        print(f"Could not save the HTML report: {exc}", file=sys.stderr)
 
 
 if __name__ == "__main__":
