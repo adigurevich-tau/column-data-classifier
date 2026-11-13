@@ -21,6 +21,7 @@ from detectors import ssn, email, phone_number, date_of_birth, city, person_name
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
 MANDATORY_COLUMN_THRESHOLD = 0.95
+SUPPLEMENTAL_COLUMN_THRESHOLD = 0.05
 NULL_VALUES = {"", "null", "none", "n/a", "na", "nan", "nil", "-", "--", "?", "undefined", "unknown"}
 
 # Specific categories run before broad categories such as City and Person Name.
@@ -120,7 +121,14 @@ def classify_column(header, raw_values, resources=None):
         supplemental_rate = supplemental / len(values)
         normalized_header = header.strip().lower().replace(" ", "_").replace("-", "_")
         header_excludes_dob = category == "Date of Birth" and normalized_header in NON_DOB_DATE_HEADERS
-        passed = mandatory_rate >= MANDATORY_COLUMN_THRESHOLD and not header_excludes_dob
+        header_excludes_phone = category == "Phone Number" and normalized_header in NON_DOB_DATE_HEADERS
+        has_supplemental_support = supplemental > 0 and supplemental_rate >= SUPPLEMENTAL_COLUMN_THRESHOLD
+        passed = (
+            mandatory_rate >= MANDATORY_COLUMN_THRESHOLD
+            and has_supplemental_support
+            and not header_excludes_dob
+            and not header_excludes_phone
+        )
         candidate = {
             "data_class": category,
             "mandatory_matches": mandatory,
@@ -152,7 +160,8 @@ def classify_column(header, raw_values, resources=None):
         reason=(
             f"{mandatory_rate:.0%} of non-empty values pass mandatory {category} checks; "
             f"{supplemental_rate:.0%} also pass the available supplemental checks. "
-            f"Column threshold: {MANDATORY_COLUMN_THRESHOLD:.0%} mandatory matches."
+            f"Column thresholds: {MANDATORY_COLUMN_THRESHOLD:.0%} mandatory and "
+            f"{SUPPLEMENTAL_COLUMN_THRESHOLD:.0%} supplemental matches (at least one supplemental match)."
         ),
     )
     return result
