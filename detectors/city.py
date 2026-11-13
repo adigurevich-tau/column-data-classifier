@@ -9,9 +9,9 @@ def _capitalization_ok(value):
 
 
 def detect(value, resources=None):
-    if not isinstance(value, str):
+    if not isinstance(value, str) or value != value.strip():
         return False, {}
-    text = value.strip()
+    text = value
     words = text.split()
     if len(text) < 2 or not 1 <= len(words) <= 4 or not _SHAPE.fullmatch(text) or not _capitalization_ok(text):
         return False, {}
