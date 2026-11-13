@@ -118,7 +118,9 @@ def classify_column(header, raw_values, resources=None):
                     supplemental += 1
         mandatory_rate = mandatory / len(values)
         supplemental_rate = supplemental / len(values)
-        passed = mandatory_rate >= MANDATORY_COLUMN_THRESHOLD
+        normalized_header = header.strip().lower().replace(" ", "_").replace("-", "_")
+        header_excludes_dob = category == "Date of Birth" and normalized_header in NON_DOB_DATE_HEADERS
+        passed = mandatory_rate >= MANDATORY_COLUMN_THRESHOLD and not header_excludes_dob
         candidate = {
             "data_class": category,
             "mandatory_matches": mandatory,
