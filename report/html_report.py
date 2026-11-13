@@ -14,12 +14,13 @@ def _candidate_rows(candidates):
     rows = []
     for candidate in candidates:
         status = "Passed" if candidate.get("accepted") else "Not passed"
+        status_class = "passed" if candidate.get("accepted") else "failed"
         rows.append(
             "<tr>"
             f"<td>{escape(str(candidate.get('data_class', 'Unknown')))}</td>"
             f"<td>{_percent(candidate.get('mandatory_rate', 0))}</td>"
             f"<td>{_percent(candidate.get('supplemental_rate', 0))}</td>"
-            f"<td><span class=\"check-status {'passed' if candidate.get('accepted') else 'failed'}\">{status}</span></td>"
+            f"<td><span class=\\"check-status {status_class}\\">{status}</span></td>"
             "</tr>"
         )
     return (
