@@ -32,11 +32,10 @@ Optional arguments:
 
 - `--verbose` — show match rates for each candidate category.
 - `--json` — print results as JSON.
-- `--max-rows N` — analyze the first N rows; use `0` to analyze all rows.
 
 ## Results
 
-The program prints the classification results and creates an HTML report next to the input CSV. For example, `sample_employees.csv` produces `sample_employees_report.html`.
+The program analyzes all data rows in the CSV, prints the classification results, and creates an HTML report next to the input CSV. For example, `sample_employees.csv` produces `sample_employees_report.html`.
 
 The HTML report contains column names and classification statistics, not CSV cell values. The CSV is read locally and is not modified or uploaded.
 
