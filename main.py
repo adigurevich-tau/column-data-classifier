@@ -14,6 +14,7 @@ import csv
 import datetime as dt
 import io
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -37,11 +38,23 @@ DETECTORS = [
 ]
 
 DOB_HEADERS = {"dob", "date_of_birth", "birth_date", "birthdate", "date_birth"}
+DOB_HEADER_VETO_TOKENS = {
+    "start", "hire", "created", "updated", "end", "join", "subscription",
+    "signup", "registration", "order", "login", "issued", "expiry", "due",
+    "transaction", "timestamp",
+}
 NON_DOB_DATE_HEADERS = {
     "start_date", "hire_date", "employment_start", "employment_start_date",
     "termination_date", "end_date", "created_at", "updated_at",
     "date_created", "date_updated", "joining_date",
 }
+
+
+def is_non_dob_date_header(header):
+    """Return whether any normalized header token vetoes Date of Birth."""
+    camel_case_split = re.sub(r"([a-z])([A-Z])", r"\1_\2", header.strip())
+    tokens = set(re.findall(r"[a-z0-9]+", camel_case_split.lower()))
+    return bool(tokens & DOB_HEADER_VETO_TOKENS)
 
 
 class Resources:
@@ -78,7 +91,7 @@ def supplemental_result(category, value, details, resources, header=""):
         return bool(details.get("has_country_prefix") or details.get("formatted_us_number"))
     if category == "Date of Birth":
         normalized_header = header.strip().lower().replace(" ", "_").replace("-", "_")
-        if normalized_header in NON_DOB_DATE_HEADERS:
+        if is_non_dob_date_header(header):
             return False
         return bool(details.get("plausible_birth_age") or normalized_header in DOB_HEADERS)
     if category == "US State":
@@ -123,7 +136,7 @@ def classify_column(header, raw_values, resources=None):
         mandatory_rate = mandatory / len(values)
         supplemental_rate = supplemental / len(values)
         normalized_header = header.strip().lower().replace(" ", "_").replace("-", "_")
-        header_excludes_dob = category == "Date of Birth" and normalized_header in NON_DOB_DATE_HEADERS
+        header_excludes_dob = category == "Date of Birth" and is_non_dob_date_header(header)
         header_excludes_phone = category == "Phone Number" and normalized_header in NON_DOB_DATE_HEADERS
         has_supplemental_support = supplemental > 0 and supplemental_rate >= SUPPLEMENTAL_COLUMN_THRESHOLD
         passed = (
