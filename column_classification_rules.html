@@ -23,6 +23,7 @@ details{border:1px solid var(--line);border-radius:10px;background:var(--card);p
 <button class="tab" role="tab" id="tab-overview" aria-controls="panel-overview" aria-selected="true">Overview</button>
 <button class="tab" role="tab" id="tab-rules" aria-controls="panel-rules" aria-selected="false">Class rules</button>
 <button class="tab" role="tab" id="tab-workflow" aria-controls="panel-workflow" aria-selected="false">Example output</button>
+<button class="tab" role="tab" id="tab-run" aria-controls="panel-run" aria-selected="false">How to run</button>
 </div>
 <section class="panel" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
 <div class="section-head"><h2>Overview</h2><p>Short summary of the solution. The sections below are placeholders to fill in together.</p></div>
@@ -79,6 +80,8 @@ details{border:1px solid var(--line);border-radius:10px;background:var(--card);p
 </section>
 <section class="panel" id="panel-workflow" role="tabpanel" aria-labelledby="tab-workflow" hidden>
 <h2>Example output</h2><p>Actual results from running the classifier on <code>sample_employees.csv</code>. The report evaluated 4 data rows across 16 columns. No CSV cell values or sample records are reproduced here.</p><div class="grid"><div class="card"><h3>16</h3><p>Total columns</p></div><div class="card"><h3>7</h3><p>Classified</p></div><div class="card"><h3>9</h3><p>Not classified</p></div><div class="card"><h3>4</h3><p>Rows evaluated</p></div></div><h3>Column-by-column results</h3><div class="card"><div style="overflow-x:auto"><table><thead><tr><th>Column</th><th>Assigned tag</th><th>Confidence</th><th>Non-empty rows</th><th>Match results / explanation</th></tr></thead><tbody><tr><td>employee_id</td><td>Not classified</td><td>—</td><td>4</td><td>Closest: National ID (US SSN), 0% mandatory</td></tr><tr><td>full_name</td><td>Person Name</td><td>High</td><td>4</td><td>100% mandatory · 100% supplemental</td></tr><tr><td>email</td><td>Email Address</td><td>High</td><td>4</td><td>100% mandatory · 100% supplemental</td></tr><tr><td>phone</td><td>Phone Number</td><td>High</td><td>4</td><td>100% mandatory · 100% supplemental</td></tr><tr><td>ssn</td><td>National ID (US SSN)</td><td>High</td><td>4</td><td>100% mandatory · 100% supplemental</td></tr><tr><td>dob</td><td>Date of Birth</td><td>High</td><td>4</td><td>100% mandatory · 100% supplemental</td></tr><tr><td>city</td><td>City</td><td>High</td><td>4</td><td>100% mandatory · 100% supplemental</td></tr><tr><td>state</td><td>US State</td><td>High</td><td>4</td><td>100% mandatory · 100% supplemental</td></tr><tr><td>gender</td><td>Not classified</td><td>—</td><td>4</td><td>Closest: City, 25% mandatory</td></tr><tr><td>title</td><td>Not classified</td><td>—</td><td>4</td><td>Closest: City, 100% mandatory; supplemental support did not meet the threshold</td></tr><tr><td>department</td><td>Not classified</td><td>—</td><td>4</td><td>Closest: City, 50% mandatory</td></tr><tr><td>annual_salary</td><td>Not classified</td><td>—</td><td>4</td><td>No category reached the mandatory threshold</td></tr><tr><td>bank_account</td><td>Not classified</td><td>—</td><td>4</td><td>No category reached the mandatory threshold</td></tr><tr><td>start_date</td><td>Not classified</td><td>—</td><td>4</td><td>Date of Birth had 100% mandatory matches, but no supplemental support; header is a non-DOB date header</td></tr><tr><td>field_12</td><td>Not classified</td><td>—</td><td>4</td><td>No category reached the mandatory threshold</td></tr><tr><td>notes</td><td>Not classified</td><td>—</td><td>3</td><td>No category reached the mandatory threshold</td></tr></tbody></table></div></div><p class="muted">All seven classified columns passed with 100% mandatory and 100% supplemental matches. Unclassified columns remain untagged when the mandatory threshold, supplemental evidence requirement, or category-specific header rule is not satisfied.</p>
+</section>
+<section class="panel" id="panel-run" role="tabpanel" aria-labelledby="tab-run" hidden>
 <h2>How to run the classifier</h2><p>Clone the repository and open a terminal in the project directory.</p>
 <pre>git clone https://github.com/adigurevich-tau/column-data-classifier.git
 cd column-data-classifier
@@ -112,7 +115,8 @@ python3 main.py sample_employees.csv --json</pre>
     └── test_html_report.py</pre>
 <h2>Generated HTML report and privacy</h2><p>After a successful analysis, the program writes a standalone report beside the source CSV. For example, <code>sample_employees.csv</code> produces <code>sample_employees_report.html</code>.</p><ul><li>Summary cards show total columns, classified columns, unclassified columns, and rows evaluated.</li><li>A collapsible column summary lists each column name and its assigned tag.</li><li>Individual column cards show category, confidence, mandatory and supplemental match rates, non-empty row count, explanation, and expandable candidate checks.</li><li>The report does not include CSV cell values or sample records.</li><li>The original CSV is read locally and is not modified or uploaded by the program.</li></ul>
 <p class="muted">No third-party Python packages are required; the project uses the Python standard library.</p>
-</section>
+
+
 </main>
 <script>
 (function(){
