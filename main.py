@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the eight column detectors and classify CSV columns.
+"""Run the seven column detectors and classify CSV columns.
 
 Run interactively:
     python main.py
@@ -17,7 +17,7 @@ import json
 import sys
 from pathlib import Path
 
-from detectors import ssn, email, phone_number, date_of_birth, city, person_name, us_state, employment_position
+from detectors import ssn, email, phone_number, date_of_birth, city, person_name, us_state
 from report.html_report import write_report
 
 DATA_DIR = Path(__file__).resolve().parent / "data"
@@ -32,7 +32,6 @@ DETECTORS = [
     ("Phone Number", phone_number.detect),
     ("Date of Birth", date_of_birth.detect),
     ("US State", us_state.detect),
-    ("Employment Position", employment_position.detect),
     ("City", city.detect),
     ("Person Name", person_name.detect),
 ]
@@ -54,7 +53,6 @@ class Resources:
         self.first_names = self._load_set("first_names.txt")
         self.surnames = self._load_set("surnames.txt")
         self.us_states = self._load_set("us_states.txt")
-        self.employment_positions = self._load_set("employment_positions.txt")
 
     @staticmethod
     def _load_set(filename):
@@ -83,8 +81,6 @@ def supplemental_result(category, value, details, resources, header=""):
         return bool(details.get("plausible_birth_age") or normalized_header in DOB_HEADERS)
     if category == "US State":
         return bool(details.get("known_us_state"))
-    if category == "Employment Position":
-        return bool(details.get("known_employment_position"))
     if category == "City":
         return bool(details.get("known_city"))
     if category == "Person Name":
@@ -203,7 +199,7 @@ def read_csv(path, max_rows=100000):
 
 def ask_for_csv_path():
     print("\nWelcome to the Column Data Classifier!")
-    print("This tool checks CSV columns for eight data categories.")
+    print("This tool checks CSV columns for seven data categories.")
     print("Your CSV is read locally by this program; it is not uploaded.\n")
     while True:
         try:
@@ -258,7 +254,7 @@ def print_results(results, file_name, verbose=False):
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="Classify CSV columns into eight data categories.")
+    parser = argparse.ArgumentParser(description="Classify CSV columns into seven data categories.")
     parser.add_argument("csv_path", nargs="?", help="path to a CSV file; omit it for interactive mode")
     parser.add_argument("--json", action="store_true", help="print JSON output")
     parser.add_argument("--verbose", "-v", action="store_true", help="include per-category match rates")
