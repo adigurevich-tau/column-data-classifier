@@ -2,13 +2,14 @@
 import re
 
 _ALLOWED = re.compile(r"^[A-Za-z][A-Za-z .'-]*$")
+_PLACEHOLDERS = {"unknown", "anonymous", "n/a", "test user"}
 
 
 def detect(value, resources=None):
     if not isinstance(value, str):
         return False, {}
     text = value.strip()
-    if len(text) < 2:
+    if text.lower() in _PLACEHOLDERS or len(text) < 2:
         return False, {}
     if text != value or "  " in text or text.startswith(" ") or text.endswith(" "):
         return False, {}
