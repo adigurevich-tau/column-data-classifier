@@ -60,8 +60,8 @@ details{border:1px solid var(--line);border-radius:10px;background:var(--card);p
 <h4>Supplemental checks</h4><ul><li>Age implied by the date is between 0 and 120, inclusive; or the header is one of dob, date_of_birth, birth_date, birthdate, date_birth.</li><li>Known non-DOB headers (including start_date, hire_date, termination_date, end_date, created_at, updated_at, and joining_date) block DOB classification.</li></ul>
 </details>
 <details><summary>5. US State</summary>
-<h4>Mandatory checks</h4><ul><li>Value matches a US state name or USPS two-letter abbreviation, case-insensitively.</li><li>Leading or trailing whitespace is not accepted.</li></ul>
-<h4>Supplemental checks</h4><ul><li>Value is present in the editable data/us_states.txt reference list.</li></ul>
+<h4>Mandatory checks</h4><ul><li>Value is either a two-letter abbreviation or a one-to-three-word alphabetic name format.</li><li>Matching is case-insensitive; leading or trailing whitespace is not accepted.</li></ul>
+<h4>Supplemental checks</h4><ul><li>Value matches a recognized US state name or USPS two-letter abbreviation in the data/us_states.txt reference list.</li></ul>
 </details>
 
 <details><summary>7. City</summary>
