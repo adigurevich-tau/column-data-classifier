@@ -60,6 +60,9 @@ No third-party packages are required.
 │   ├── us_state.py
 ├── report/
 │   └── html_report.py
+├── example_results/
+│   ├── sample_output.txt
+│   └── sample_employees_report.html
 ├── data/
 │   ├── cities.txt
 │   ├── first_names.txt
@@ -93,6 +96,9 @@ For privacy, the HTML report does **not** include CSV cell values or sample reco
 It contains column headers and aggregate classification information only. The
 original CSV is not changed. The terminal results and optional `--json` output
 continue to work as before.
+
+The `example_results/` folder contains the terminal output and HTML report generated
+for the included `sample_employees.csv` example.
 
 Run all tests with:
 
