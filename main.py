@@ -69,7 +69,7 @@ class Resources:
 
 
 def supplemental_result(category, value, details, resources, header=""):
-    """Return whether optional evidence supports a mandatory match."""
+    """Return whether the value passes the category's supplemental checks."""
     if category == "National ID (US SSN)":
         return bool(details.get("formatted") or details.get("area_at_or_below_772"))
     if category == "Email Address":
