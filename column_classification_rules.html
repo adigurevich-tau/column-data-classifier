@@ -45,7 +45,7 @@ details{border:1px solid var(--line);border-radius:10px;background:var(--card);p
 </ol><p class="muted">Specific categories run before broader categories such as City and Person Name. If multiple categories pass, the classifier selects the one with the highest mandatory match rate, then the highest supplemental match rate. Detector order resolves a remaining tie.</p></div>
 <h2>Rules for each category</h2>
 <details><summary>1. National ID (US SSN)</summary>
-<h4>Mandatory checks</h4><ul><li>String or non-negative integer containing exactly nine digits.</li><li>Digits are contiguous or grouped 3-2-4 with consistent hyphens or spaces.</li><li>Area is not 000, 666, or 900–999; group is not 00; serial is not 0000.</li></ul>
+<h4>Mandatory checks</h4><ul><li>A string or a whole number greater than or equal to zero, containing exactly nine digits.</li><li>Digits are contiguous or grouped 3-2-4 with consistent hyphens or spaces.</li><li>Area is not 000, 666, or 900–999; group is not 00; serial is not 0000.</li></ul>
 <h4>Supplemental checks</h4><ul><li>Standard 3-2-4 separator format.</li><li>Area number is at or below 772. This is a supplemental hint only, not a validity rule.</li></ul>
 </details>
 <details><summary>2. Email Address</summary>
@@ -53,7 +53,7 @@ details{border:1px solid var(--line);border-radius:10px;background:var(--card);p
 <h4>Supplemental checks</h4><ul><li>Top-level domain is alphabetic and at least two letters long.</li><li></li></ul>
 </details>
 <details><summary>3. Phone Number</summary>
-<h4>Mandatory checks</h4><ul><li>String or non-negative integer; main phone number contains 7–15 digits.</li><li>Main number uses only digits, spaces, hyphens, parentheses, and an optional + at the beginning.</li><li>Optional extension formats: x3819, ext 3819, ext. 3819, or extension 3819. Extension has 1–6 digits and is excluded from the main-number digit count.</li><li>Date-shaped values are rejected; plus signs may appear only once and only at the beginning.</li></ul>
+<h4>Mandatory checks</h4><ul><li>A string or a whole number greater than or equal to zero; the main phone number contains 7–15 digits.</li><li>Main number uses only digits, spaces, hyphens, parentheses, and an optional + at the beginning.</li><li>Optional extension formats: x3819, ext 3819, ext. 3819, or extension 3819. Extension has 1–6 digits and is excluded from the main-number digit count.</li><li>Date-shaped values are rejected; plus signs may appear only once and only at the beginning.</li></ul>
 <h4>Supplemental checks</h4><ul><li>Starts with + or 00 (international-prefix hint), or matches the recognized US-style format.</li><li>Format matching does not verify that a number is assigned or reachable.</li></ul>
 </details>
 <details><summary>4. Date of Birth</summary>
