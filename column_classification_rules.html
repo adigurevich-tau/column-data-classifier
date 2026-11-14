@@ -47,7 +47,25 @@ details{border:1px solid var(--line);border-radius:10px;background:var(--card);p
 <li><strong>Use cross-column context:</strong> Adapt checks based on values in other columns—for example, validate phone numbers against US formats when the country or city indicates the US.</li>
 </ol>
 </div>
-<div class="card"><h3>Results and next steps</h3><p class="muted">What works well — to be filled in.</p><p class="muted">What does not — to be filled in.</p><p class="muted">What you would do next with more time — to be filled in.</p></div>
+<div class="card"><h3>What Works Well</h3>
+<ul><li><strong>SSN, email, and other close-list categories such as US states</strong> are the easiest to detect reliably.</li></ul>
+</div>
+<div class="card"><h3>What Does Not Work Well</h3>
+<ol>
+<li><strong>Free-text columns:</strong> These are the hardest to classify because they lack unique mandatory checks and cannot easily be compared against a predefined list without a large reference database.</li>
+<li><strong>Birth dates:</strong> They can be confused with other date columns, such as ages or start dates. Defining reliable rules is difficult because valid age ranges depend on the population represented in the dataset.</li>
+<li><strong>Thresholds:</strong> Current thresholds are based on intuition and need to be validated across different datasets, considering factors such as missing values and spelling consistency.</li>
+</ol>
+</div>
+<div class="card"><h3>With More Time</h3>
+<ol>
+<li><strong>Tune thresholds:</strong> Test multiple datasets and analyze score distributions to set more reliable thresholds.</li>
+<li><strong>Explore more data examples:</strong> Investigate additional formats and edge cases, such as phone number extensions.</li>
+<li><strong>Add more classifiers:</strong> Expand the number of supported categories to improve coverage.</li>
+<li><strong>Expand reference databases:</strong> Build larger example datasets for comparison.</li>
+<li><strong>Test against known labels:</strong> Evaluate the classifier on datasets with known column types to identify additional failure cases.</li>
+</ol>
+</div>
 </div>
 </section>
 <section class="panel" id="panel-rules" role="tabpanel" aria-labelledby="tab-rules" hidden>
