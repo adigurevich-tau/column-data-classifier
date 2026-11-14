@@ -6,6 +6,7 @@ _DOMAIN_ALLOWED = re.compile(r"^[A-Za-z0-9.-]+$")
 
 
 def detect(value, resources=None):
+    """Check whether a value follows the mandatory email syntax rules."""
     if not isinstance(value, str) or value.count("@") != 1 or any(ch.isspace() for ch in value):
         return False, {}
     local, domain = value.split("@")
