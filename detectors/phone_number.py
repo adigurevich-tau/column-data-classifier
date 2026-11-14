@@ -10,6 +10,7 @@ _US_FORMAT = re.compile(
 
 
 def detect(value, resources=None):
+    """Check phone-number structure and collect supplemental format evidence."""
     if isinstance(value, bool):
         return False, {}
     if isinstance(value, int):
