@@ -1,0 +1,85 @@
+Analyzing 16 columns ...
+
+================================================================
+
+                 COLUMN CLASSIFICATION RESULTS
+
+================================================================
+
+File: sample_employees.csv
+
+Columns analyzed: 16
+
+----------------------------------------------------------------
+
+employee_id  ->  Not classified
+
+  No category reached the 95% mandatory-match threshold. Closest: National ID (US SSN) (0% mandatory matches).
+
+full_name  ->  Person Name (High confidence)
+
+  100% of non-empty values pass mandatory Person Name checks; 100% also pass the available supplemental checks. Column thresholds: 95% mandatory and 5% supplemental matches (at least one supplemental match).
+
+email  ->  Email Address (High confidence)
+
+  100% of non-empty values pass mandatory Email Address checks; 100% also pass the available supplemental checks. Column thresholds: 95% mandatory and 5% supplemental matches (at least one supplemental match).
+
+phone  ->  Phone Number (High confidence)
+
+  100% of non-empty values pass mandatory Phone Number checks; 100% also pass the available supplemental checks. Column thresholds: 95% mandatory and 5% supplemental matches (at least one supplemental match).
+
+ssn  ->  National ID (US SSN) (High confidence)
+
+  100% of non-empty values pass mandatory National ID (US SSN) checks; 100% also pass the available supplemental checks. Column thresholds: 95% mandatory and 5% supplemental matches (at least one supplemental match).
+
+dob  ->  Date of Birth (High confidence)
+
+  100% of non-empty values pass mandatory Date of Birth checks; 100% also pass the available supplemental checks. Column thresholds: 95% mandatory and 5% supplemental matches (at least one supplemental match).
+
+city  ->  City (High confidence)
+
+  100% of non-empty values pass mandatory City checks; 100% also pass the available supplemental checks. Column thresholds: 95% mandatory and 5% supplemental matches (at least one supplemental match).
+
+state  ->  US State (High confidence)
+
+  100% of non-empty values pass mandatory US State checks; 100% also pass the available supplemental checks. Column thresholds: 95% mandatory and 5% supplemental matches (at least one supplemental match).
+
+gender  ->  Not classified
+
+  No category reached the 95% mandatory-match threshold. Closest: City (25% mandatory matches).
+
+title  ->  Not classified
+
+  No category reached the 95% mandatory-match threshold. Closest: City (100% mandatory matches).
+
+department  ->  Not classified
+
+  No category reached the 95% mandatory-match threshold. Closest: City (50% mandatory matches).
+
+annual_salary  ->  Not classified
+
+  No category reached the 95% mandatory-match threshold. Closest: National ID (US SSN) (0% mandatory matches).
+
+bank_account  ->  Not classified
+
+  No category reached the 95% mandatory-match threshold. Closest: National ID (US SSN) (0% mandatory matches).
+
+start_date  ->  Not classified
+
+  No category reached the 95% mandatory-match threshold. Closest: Date of Birth (100% mandatory matches).
+
+field_12  ->  Not classified
+
+  No category reached the 95% mandatory-match threshold. Closest: National ID (US SSN) (0% mandatory matches).
+
+notes  ->  Not classified
+
+  No category reached the 95% mandatory-match threshold. Closest: National ID (US SSN) (0% mandatory matches).
+
+================================================================
+
+Done. Your original CSV file has not been modified.
+
+================================================================
+
+HTML report saved to: /Users/adigur/Desktop/dataTag/sample_employees_report.html
