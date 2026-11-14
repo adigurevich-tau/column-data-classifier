@@ -170,7 +170,7 @@ def classify_column(header, raw_values, resources=None):
     return result
 
 
-def read_csv(path, max_rows=100000):
+def read_csv(path):
     """Read a CSV file and return its headers and column values."""
     raw = Path(path).read_bytes()
     for encoding in ("utf-8-sig", "cp1252", "latin-1"):
@@ -191,9 +191,7 @@ def read_csv(path, max_rows=100000):
         return [], []
     headers = [(name.strip() or f"column_{i + 1}") for i, name in enumerate(headers)]
     columns = [[] for _ in headers]
-    for row_index, row in enumerate(reader):
-        if max_rows and row_index >= max_rows:
-            break
+    for row in reader:
         if not row:
             continue
         for index in range(len(headers)):
@@ -265,11 +263,7 @@ def main(argv=None):
     parser.add_argument("csv_path", nargs="?", help="path to a CSV file; omit it for interactive mode")
     parser.add_argument("--json", action="store_true", help="print JSON output")
     parser.add_argument("--verbose", "-v", action="store_true", help="include per-category match rates")
-    parser.add_argument("--max-rows", type=int, default=100000, help="inspect first N rows; 0 means all rows")
     args = parser.parse_args(argv)
-
-    if args.max_rows < 0:
-        parser.error("--max-rows must be zero or a positive integer")
 
     path = Path(args.csv_path).expanduser() if args.csv_path else ask_for_csv_path()
     if path is None:
@@ -281,7 +275,7 @@ def main(argv=None):
 
     try:
         print(f"\nReading {path} ...")
-        headers, columns = read_csv(path, args.max_rows)
+        headers, columns = read_csv(path)
         if not headers:
             print("The CSV file is empty or does not contain a header row.")
             return
