@@ -1,7 +1,7 @@
 # Sensitive-data column classifier
 
 A deterministic, standard-library-only CSV column classifier. Each category has its
-own detector module under `detectors/`; `main.py` runs the checks in a fixed order.
+own detector module under `detectors/`; `main.py` runs the seven checks in a fixed order.
 
 ## Quick start
 
@@ -58,7 +58,6 @@ No third-party packages are required.
 │   ├── city.py
 │   ├── person_name.py
 │   ├── us_state.py
-│   └── employment_position.py
 ├── report/
 │   └── html_report.py
 ├── data/
@@ -66,7 +65,6 @@ No third-party packages are required.
 │   ├── first_names.txt
 │   ├── surnames.txt
 │   ├── us_states.txt
-│   └── employment_positions.txt
 └── tests/
     ├── test_classify.py
     └── test_html_report.py
@@ -79,13 +77,11 @@ No third-party packages are required.
 3. Phone Number
 4. Date of Birth
 5. US State
-6. Employment Position
 7. City
 8. Person Name
 
 City and Person Name intentionally run last because their patterns are broader.
-The US State and Employment Position reference lists can be edited in
-`data/us_states.txt` and `data/employment_positions.txt`.
+The US State reference list can be edited in `data/us_states.txt`.
 
 ## HTML report
 
@@ -110,14 +106,14 @@ python3 -m unittest discover -s tests -v
 Each detector enforces the agreed mandatory value-level checks. Reference lists and
 format-specific hints are supplemental evidence; they do not replace mandatory checks.
 
-- **SSN:** string or unsigned integer; exactly nine digits, either contiguous or in
+- **SSN:** string or non-negative integer; exactly nine digits, either contiguous or in
   consistent 3-2-4 groups separated by hyphens/spaces; area not 000, 666, or 900-999;
   group not 00; serial not 0000. The 772 area ceiling is recorded only as supplemental
   evidence, not as a validity condition.
 - **Email:** one @, non-empty local/domain parts, no leading/trailing/consecutive dots
   in the local part, no whitespace or invalid characters, and a domain with at least
   two non-empty labels. A valid-looking TLD is supplemental.
-- **Phone:** string or unsigned integer; 7-15 digits after removing allowed spaces,
+- **Phone:** string or non-negative integer; 7-15 digits after removing allowed spaces,
   hyphens, and parentheses; optional plus only at the beginning; no other characters.
   Country-specific numbering checks are supplemental and are not fully implemented.
 - **Date of Birth:** string/date/datetime in one of the agreed four-digit-year formats;
@@ -128,9 +124,8 @@ format-specific hints are supplemental evidence; they do not replace mandatory c
   gazetteer is supplemental evidence.
 - **Person Name:** 1-5 words, at least two characters, letters/spaces/hyphens/
   apostrophes/periods only, no leading/trailing/repeated spaces, consistent uppercase,
-  lowercase, or title case, and not a known placeholder. First-name and surname
-  dictionaries, multiple name components, city exclusion, and generic/job-title
-  exclusions are supplemental signals.
+  lowercase, or title case. First-name and surname dictionaries, multiple name
+  components, and city exclusion are supplemental signals.
 
 ## Column decision
 
