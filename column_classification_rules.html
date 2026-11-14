@@ -28,7 +28,16 @@ details{border:1px solid var(--line);border-radius:10px;background:var(--card);p
 <section class="panel" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
 <div class="section-head"><h2>Overview</h2><p>Short summary of the solution. The sections below are placeholders to fill in together.</p></div>
 <div class="grid">
-<div class="card"><h3>Your approach</h3><p class="muted">Approach, in a few sentences — to be filled in.</p><p class="muted">Other options considered — to be filled in.</p></div>
+<div class="card"><h3>Approach</h3>
+<p>First, null-like values (e.g., empty strings, <code>N/A</code>, and <code>None</code>) are excluded.</p>
+<p>Each column is then evaluated against all seven classifiers. Each classifier applies two types of checks:</p>
+<ul><li><strong>Mandatory checks</strong> – verify that values match the basic requirements of a category.</li>
+<li><strong>Supplementary checks</strong> – provide additional evidence supporting the classification.</li></ul>
+<p>A column is assigned a single classification only if:</p>
+<ul><li>At least <strong>95%</strong> of its non-null values pass the mandatory checks.</li>
+<li>At least <strong>5%</strong> pass the supplementary checks, with at least one supplementary match.</li></ul>
+<p>If multiple classifiers qualify, the one with the strongest match rates is selected.</p>
+</div>
 <div class="card"><h3>Results and next steps</h3><p class="muted">What works well — to be filled in.</p><p class="muted">What does not — to be filled in.</p><p class="muted">What you would do next with more time — to be filled in.</p></div>
 </div>
 </section>
