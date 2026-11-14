@@ -1,11 +1,11 @@
 """Phone number checks using general structural rules and US-format evidence."""
 import re
 
-_ALLOWED = re.compile(r"^\\+?[0-9 ().-]+$")
-_EXTENSION = re.compile(r"^(.*?)(?:\\s*(?:x|ext\\.?|extension)\\s*(\\d{1,6}))$", re.IGNORECASE)
+_ALLOWED = re.compile(r"^\+?[0-9 ().-]+$")
+_EXTENSION = re.compile(r"^(.*?)(?:\s*(?:x|ext\.?|extension)\s*(\d{1,6}))$", re.IGNORECASE)
 _US_FORMAT = re.compile(
-    r"^(?:\\+?1[ .-]?)?(?:\\([2-9]\\d{2}\\)|[2-9]\\d{2})"
-    r"[ .-]?[2-9]\\d{2}[ .-]?\\d{4}$"
+    r"^(?:\+?1[ .-]?)?(?:\([2-9]\d{2}\)|[2-9]\d{2})"
+    r"[ .-]?[2-9]\d{2}[ .-]?\d{4}$"
 )
 
 
@@ -38,15 +38,15 @@ def detect(value, resources=None):
 
     # Date-shaped strings are not accepted as phone numbers.
     if (
-        re.fullmatch(r"\\d{4}-\\d{2}-\\d{2}", main_number)
-        or re.fullmatch(r"\\d{4}-\\d{2}-\\d{4}", main_number)
-        or re.fullmatch(r"\\d{2}[/-]\\d{2}[/-]\\d{4}", main_number)
+        re.fullmatch(r"\d{4}-\d{2}-\d{2}", main_number)
+        or re.fullmatch(r"\d{4}-\d{2}-\d{4}", main_number)
+        or re.fullmatch(r"\d{2}[/-]\d{2}[/-]\d{4}", main_number)
     ):
         return False, {}
     if main_number.count("+") > 1 or ("+" in main_number and not main_number.startswith("+")):
         return False, {}
 
-    digits = re.sub(r"\\D", "", main_number)
+    digits = re.sub(r"\D", "", main_number)
     if not 7 <= len(digits) <= 15:
         return False, {}
     return True, {
