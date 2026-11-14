@@ -37,8 +37,19 @@ class DetectorTests(unittest.TestCase):
                       "857-790-7181x", "857-790-7181x1234567", -1234567):
             self.assertFalse(phone_number.detect(value, self.resources)[0])
 
-    def test_us_state_whitespace_normalization(self):
-        self.assertTrue(us_state.detect("New  York", self.resources)[0])
+    def test_us_state_mandatory_format_and_supplemental_reference(self):
+        for value in ("California", "New York", "Rhode Island", "NY", "CA", "New  York"):
+            passed, details = us_state.detect(value, self.resources)
+            self.assertTrue(passed, value)
+            self.assertTrue(details["known_us_state"], value)
+
+        for value in ("XX", "New Zealand"):
+            passed, details = us_state.detect(value, self.resources)
+            self.assertTrue(passed, value)  # plausible format passes mandatory
+            self.assertFalse(details["known_us_state"], value)  # not a US state
+
+        for value in ("", "New York State 3", " New York", "New York "):
+            self.assertFalse(us_state.detect(value, self.resources)[0], value)
 
     def test_dob_rules(self):
         for value in ("1990-03-14", "14/03/1990", "03/14/1990", "14-03-1990"):
