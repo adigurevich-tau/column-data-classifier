@@ -5,7 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import main
-from detectors import ssn, email, phone_number, date_of_birth, city, person_name
+from detectors import ssn, email, phone_number, date_of_birth, city, person_name, us_state
 
 
 class DetectorTests(unittest.TestCase):
@@ -36,6 +36,9 @@ class DetectorTests(unittest.TestCase):
         for value in ("123456", "1234567890123456", "12+3456789", "++1234567", "123-ABC-7890",
                       "857-790-7181x", "857-790-7181x1234567", -1234567):
             self.assertFalse(phone_number.detect(value, self.resources)[0])
+
+    def test_us_state_whitespace_normalization(self):
+        self.assertTrue(us_state.detect("New  York", self.resources)[0])
 
     def test_dob_rules(self):
         for value in ("1990-03-14", "14/03/1990", "03/14/1990", "14-03-1990"):
