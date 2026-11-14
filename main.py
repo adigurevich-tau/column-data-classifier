@@ -48,6 +48,7 @@ class Resources:
     """Optional reference data used only as supplemental evidence."""
 
     def __init__(self, today=None):
+        """Initialize the date reference and load all supplemental lookup lists."""
         self.today = today or dt.date.today()
         self.cities = self._load_set("cities.txt")
         self.first_names = self._load_set("first_names.txt")
@@ -56,6 +57,7 @@ class Resources:
 
     @staticmethod
     def _load_set(filename):
+        """Load a comma-separated reference file into a normalized set."""
         path = DATA_DIR / filename
         values = set()
         if path.exists():
@@ -92,6 +94,7 @@ def supplemental_result(category, value, details, resources, header=""):
 
 
 def classify_column(header, raw_values, resources=None):
+    """Classify one column using mandatory and supplemental match thresholds."""
     resources = resources or Resources()
     values = [v.strip() if isinstance(v, str) else v for v in raw_values]
     values = [v for v in values if not (isinstance(v, str) and v.lower() in NULL_VALUES) and v is not None]
@@ -168,6 +171,7 @@ def classify_column(header, raw_values, resources=None):
 
 
 def read_csv(path, max_rows=100000):
+    """Read a CSV file and return its headers and column values."""
     raw = Path(path).read_bytes()
     for encoding in ("utf-8-sig", "cp1252", "latin-1"):
         try:
@@ -198,6 +202,7 @@ def read_csv(path, max_rows=100000):
 
 
 def ask_for_csv_path():
+    """Prompt until the user enters a valid CSV file path or quits."""
     print("\nWelcome to the Column Data Classifier!")
     print("This tool checks CSV columns for seven data categories.")
     print("Your CSV is read locally by this program; it is not uploaded.\n")
@@ -229,6 +234,7 @@ def ask_for_csv_path():
 
 
 def print_results(results, file_name, verbose=False):
+    """Print classification results and optional candidate match details."""
     print("\n" + "=" * 64)
     print("                 COLUMN CLASSIFICATION RESULTS")
     print("=" * 64)
@@ -254,6 +260,7 @@ def print_results(results, file_name, verbose=False):
 
 
 def main(argv=None):
+    """Parse arguments, classify the input CSV, and write its HTML report."""
     parser = argparse.ArgumentParser(description="Classify CSV columns into seven data categories.")
     parser.add_argument("csv_path", nargs="?", help="path to a CSV file; omit it for interactive mode")
     parser.add_argument("--json", action="store_true", help="print JSON output")
