@@ -63,6 +63,33 @@ class DetectorTests(unittest.TestCase):
         for value in ("1990-02-30", "1990-13-01", "01/02/90", "2024-12-3100"):
             self.assertFalse(date_of_birth.detect(value, self.resources)[0])
 
+
+    def test_dob_header_token_veto(self):
+        """Verify date-purpose tokens veto DOB classification anywhere in a header."""
+        veto_headers = (
+            "start_date", "hireDate", "created_at", "updatedAt", "end_date",
+            "join_date", "subscription_start_date", "signupDate",
+            "registration_timestamp", "order_date", "login_time", "issued_date",
+            "expiry_date", "due_date", "transaction_date", "event_timestamp",
+        )
+        details = {"plausible_birth_age": True}
+        for header in veto_headers:
+            self.assertFalse(
+                main.supplemental_result("Date of Birth", "1990-03-14", details, self.resources, header),
+                header,
+            )
+            result = main.classify_column(
+                header, ["1990-03-14", "1988-06-20", "2000-01-01"], self.resources
+            )
+            dob_candidate = next(c for c in result["candidates"] if c["data_class"] == "Date of Birth")
+            self.assertFalse(dob_candidate["accepted"], header)
+
+        self.assertTrue(
+            main.supplemental_result(
+                "Date of Birth", "1990-03-14", details, self.resources, "birth_date"
+            )
+        )
+
     def test_city_rules(self):
         """Verify accepted city-name formats and invalid-value rejection."""
         for value in ("Tel Aviv", "NEW YORK", "paris", "St. Louis"):
