@@ -38,6 +38,15 @@ details{border:1px solid var(--line);border-radius:10px;background:var(--card);p
 <li>At least <strong>5%</strong> pass the supplementary checks, with at least one supplementary match.</li></ul>
 <p>If multiple classifiers qualify, the one with the strongest match rates is selected.</p>
 </div>
+<div class="card"><h3>Other options considered</h3>
+<ol>
+<li><strong>Score individual checks:</strong> Assign a score to each supplementary check and average the scores to produce an overall result.</li>
+<li><strong>Group related categories:</strong> Identify groups of potentially related categories (e.g., date types) and classify columns only within the relevant group.</li>
+<li><strong>Expand categories:</strong> Add more categories beyond US state to help distinguish columns that might otherwise receive an incorrect classification.</li>
+<li><strong>Use column names:</strong> Lower classification thresholds when the column name provides supporting evidence for a category.</li>
+<li><strong>Use cross-column context:</strong> Adapt checks based on values in other columns—for example, validate phone numbers against US formats when the country or city indicates the US.</li>
+</ol>
+</div>
 <div class="card"><h3>Results and next steps</h3><p class="muted">What works well — to be filled in.</p><p class="muted">What does not — to be filled in.</p><p class="muted">What you would do next with more time — to be filled in.</p></div>
 </div>
 </section>
