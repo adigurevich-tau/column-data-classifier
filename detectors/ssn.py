@@ -5,6 +5,7 @@ _PATTERN = re.compile(r"^(?P<area>\d{3})(?P<sep>[- ]?)(?P<group>\d{2})(?P=sep)(?
 
 
 def detect(value, resources=None):
+    """Check whether a value follows the mandatory US SSN structure."""
     if isinstance(value, bool):
         return False, {}
     if isinstance(value, int):
