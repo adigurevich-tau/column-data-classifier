@@ -67,7 +67,6 @@ No third-party packages are required.
 │   ├── us_states.txt
 └── tests/
     ├── test_classify.py
-    └── test_html_report.py
 ```
 
 ## Detection order
