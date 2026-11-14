@@ -6,6 +6,7 @@ _FORMAT = re.compile(r"^(?:[A-Za-z]{2}|[A-Za-z]+(?: [A-Za-z]+){0,2})$")
 
 
 def detect(value, resources=None):
+    """Check the state-name format and whether it matches a known US state."""
     if not isinstance(value, str) or value != value.strip():
         return False, {}
     normalized = re.sub(r"\s+", " ", value)
