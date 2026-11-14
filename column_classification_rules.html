@@ -18,7 +18,7 @@ details{border:1px solid var(--line);border-radius:10px;background:var(--card);p
 </head>
 <body>
 <main>
-<header class="intro"><div class="eyebrow">Data tagging · CSV column classifier</div><h1>Column Classification Rules</h1><p class="muted">A deterministic, rule-based tool that examines CSV columns and assigns one of eight data categories, or leaves a column unclassified.</p></header>
+<header class="intro"><div class="eyebrow">Data tagging · CSV column classifier</div><h1>Column Classification Rules</h1><p class="muted">A deterministic, rule-based tool that examines CSV columns and assigns one of seven data categories, or leaves a column unclassified.</p></header>
 <div class="tabs" role="tablist" aria-label="Main sections">
 <button class="tab" role="tab" id="tab-overview" aria-controls="panel-overview" aria-selected="true">Overview</button>
 <button class="tab" role="tab" id="tab-rules" aria-controls="panel-rules" aria-selected="false">Class rules</button>
@@ -41,7 +41,7 @@ details{border:1px solid var(--line);border-radius:10px;background:var(--card);p
 <div class="card"><h3>Supplemental threshold</h3><p class="tag">At least 5% and at least one match</p><p>At least one value must also provide supplemental evidence, and the supplemental match rate must be at least 5%.</p></div>
 </div>
 <h2>Detector order</h2><div class="card"><ol>
-<li>National ID (US SSN)</li><li>Email Address</li><li>Phone Number</li><li>Date of Birth</li><li>US State</li><li>Employment Position</li><li>City</li><li>Person Name</li>
+<li>National ID (US SSN)</li><li>Email Address</li><li>Phone Number</li><li>Date of Birth</li><li>US State</li><li>City</li><li>Person Name</li>
 </ol><p class="muted">Specific categories run before broader categories such as City and Person Name. If multiple categories pass, the classifier selects the one with the highest mandatory match rate, then the highest supplemental match rate. Detector order resolves a remaining tie.</p></div>
 <h2>Rules for each category</h2>
 <details><summary>1. National ID (US SSN)</summary>
@@ -64,17 +64,14 @@ details{border:1px solid var(--line);border-radius:10px;background:var(--card);p
 <h4>Mandatory checks</h4><ul><li>Value matches a US state name or USPS two-letter abbreviation, case-insensitively.</li><li>Leading or trailing whitespace is not accepted.</li></ul>
 <h4>Supplemental checks</h4><ul><li>Value is present in the editable data/us_states.txt reference list.</li></ul>
 </details>
-<details><summary>6. Employment Position</summary>
-<h4>Mandatory checks</h4><ul><li>Value matches a normalized job title from the employment-position detector list.</li><li>Leading or trailing whitespace and empty values are rejected.</li></ul>
-<h4>Supplemental checks</h4><ul><li>Value matches an entry in data/employment_positions.txt. Matching ignores case and normalizes punctuation/separators.</li></ul>
-</details>
+
 <details><summary>7. City</summary>
 <h4>Mandatory checks</h4><ul><li>One to four words; starts with a letter and has at least two characters.</li><li>Only letters, spaces, periods, and apostrophes are allowed.</li><li>Capitalization is all uppercase, all lowercase, or title case.</li></ul>
 <h4>Supplemental checks</h4><ul><li>Value matches an entry in the editable data/cities.txt reference list.</li></ul>
 </details>
-<details><summary>8. Person Name</summary>
-<h4>Mandatory checks</h4><ul><li>String with 1–5 words, using letters, spaces, hyphens, apostrophes, or periods.</li><li>No leading/trailing whitespace or repeated spaces; capitalization is all uppercase, all lowercase, or title case.</li><li>Rejects placeholders: Unknown, Anonymous, N/A, and Test User.</li><li>Supports given-name-first and surname-first formats, such as Rosella Burks and Burks, Rosella.</li></ul>
-<h4>Supplemental checks</h4><ul><li>Both first-name and surname components match the reference dictionaries; or the value uses the accepted surname-first comma format.</li><li>Reference dictionaries are data/first_names.txt and data/surnames.txt.</li></ul>
+<details><summary>7. Person Name</summary>
+<h4>Mandatory checks</h4><ul><li>String with 1–5 words, using letters, spaces, hyphens, apostrophes, or periods.</li><li>No leading/trailing whitespace or repeated spaces; capitalization is all uppercase, all lowercase, or title case.</li><li>Supports given-name-first and surname-first formats, such as Rosella Burks and Burks, Rosella.</li></ul>
+<h4>Supplemental checks</h4><ul><li>Both first-name and surname components match the reference dictionaries; or the value uses the accepted surname-first comma format.</li></ul>
 </details>
 
 </section>
@@ -99,7 +96,6 @@ python3 main.py sample_employees.csv --json</pre>
 │   ├── phone_number.py
 │   ├── date_of_birth.py
 │   ├── us_state.py
-│   ├── employment_position.py
 │   ├── city.py
 │   └── person_name.py
 ├── report/
@@ -109,7 +105,6 @@ python3 main.py sample_employees.csv --json</pre>
 │   ├── first_names.txt
 │   ├── surnames.txt
 │   ├── us_states.txt
-│   └── employment_positions.txt
 └── tests/
     ├── test_classify.py
     └── test_html_report.py</pre>
