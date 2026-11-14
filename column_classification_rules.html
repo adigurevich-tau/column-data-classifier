@@ -144,7 +144,7 @@ python3 main.py sample_employees.csv --json</pre>
 │   ├── us_states.txt
 └── tests/
     ├── test_classify.py
-    └── test_html_report.py</pre>
+</pre>
 <h2>Generated HTML report and privacy</h2><p>After a successful analysis, the program writes a standalone report beside the source CSV. For example, <code>sample_employees.csv</code> produces <code>sample_employees_report.html</code>.</p><ul><li>Summary cards show total columns, classified columns, unclassified columns, and rows evaluated.</li><li>A collapsible column summary lists each column name and its assigned tag.</li><li>Individual column cards show category, confidence, mandatory and supplemental match rates, non-empty row count, explanation, and expandable candidate checks.</li><li>The report does not include CSV cell values or sample records.</li><li>The original CSV is read locally and is not modified or uploaded by the program.</li></ul>
 <p class="muted">No third-party Python packages are required; the project uses the Python standard library.</p>
 
