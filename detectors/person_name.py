@@ -6,6 +6,7 @@ _PLACEHOLDERS = {"unknown", "anonymous", "n/a", "test user"}
 
 
 def detect(value, resources=None):
+    """Check person-name structure and collect name-reference evidence."""
     if not isinstance(value, str):
         return False, {}
     text = value.strip()
