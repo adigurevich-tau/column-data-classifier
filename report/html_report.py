@@ -5,10 +5,12 @@ from datetime import datetime
 
 
 def _percent(value):
+    """Format a numeric match rate as a whole-number percentage."""
     return f"{value:.0%}"
 
 
 def _candidate_rows(candidates):
+    """Render candidate-category match rates and decisions as an HTML table."""
     if not candidates:
         return '<p class="muted">No candidate checks were available.</p>'
     rows = []
