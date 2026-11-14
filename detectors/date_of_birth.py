@@ -7,6 +7,7 @@ _YEAR4 = re.compile(r"^(?:\d{4}-\d{2}-\d{2}|\d{2}/\d{2}/\d{4}|\d{4}/\d{2}/\d{2}|
 
 
 def parse(value):
+    """Parse a supported date value into a date object."""
     if isinstance(value, dt.datetime):
         return value.date()
     if isinstance(value, dt.date):
@@ -22,6 +23,7 @@ def parse(value):
 
 
 def detect(value, resources=None):
+    """Validate a date and report whether its implied age is plausible for a birth date."""
     parsed = parse(value)
     if parsed is None:
         return False, {}
