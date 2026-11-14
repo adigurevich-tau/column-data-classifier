@@ -26,17 +26,18 @@ details{border:1px solid var(--line);border-radius:10px;background:var(--card);p
 <button class="tab" role="tab" id="tab-run" aria-controls="panel-run" aria-selected="false">How to run</button>
 </div>
 <section class="panel" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
-<div class="section-head"><h2>Overview</h2><p>Short summary of the solution. The sections below are placeholders to fill in together.</p></div>
+<div class="section-head"><h2>Overview</h2></div>
 <div class="grid">
 <div class="card"><h3>Approach</h3>
-<p>First, null-like values (e.g., empty strings, <code>N/A</code>, and <code>None</code>) are excluded.</p>
-<p>Each column is then evaluated against all seven classifiers. Each classifier applies two types of checks:</p>
-<ul><li><strong>Mandatory checks</strong> – verify that values match the basic requirements of a category.</li>
+<ol>
+<li>Exclude null-like values (e.g., empty strings, <code>N/A</code>, and <code>None</code>).</li>
+<li>Evaluate each column against all seven classifiers. Each classifier applies two types of checks:
+<ul><li><strong>Mandatory checks</strong> – verify that values meet the basic requirements of a category.</li>
 <li><strong>Supplementary checks</strong> – provide additional evidence supporting the classification.</li></ul>
-<p>A column is assigned a single classification only if:</p>
-<ul><li>At least <strong>95%</strong> of its non-null values pass the mandatory checks.</li>
-<li>At least <strong>5%</strong> pass the supplementary checks, with at least one supplementary match.</li></ul>
-<p>If multiple classifiers qualify, the one with the strongest match rates is selected.</p>
+</li>
+<li>Assign a single classification only if at least <strong>95%</strong> of non-null values pass the mandatory checks and at least <strong>5%</strong> pass the supplementary checks, with at least one supplementary match.</li>
+<li>If multiple classifiers qualify, select the one with the strongest match rates.</li>
+</ol>
 </div>
 <div class="card"><h3>Other options considered</h3>
 <ol>
@@ -47,23 +48,24 @@ details{border:1px solid var(--line);border-radius:10px;background:var(--card);p
 <li><strong>Use cross-column context:</strong> Adapt checks based on values in other columns—for example, validate phone numbers against US formats when the country or city indicates the US.</li>
 </ol>
 </div>
-<div class="card"><h3>What Works Well</h3>
-<ul><li><strong>SSN, email, and other close-list categories such as US states</strong> are the easiest to detect reliably.</li></ul>
-</div>
-<div class="card"><h3>What Does Not Work Well</h3>
+<div class="card"><h3>What Works Well / What Does Not Work Well</h3>
+<h4>What Works Well</h4>
+<ul><li><strong>SSN, email, and close-list categories such as US states</strong> are the easiest to detect reliably.</li></ul>
+<h4>What Does Not Work Well</h4>
 <ol>
 <li><strong>Free-text columns:</strong> These are the hardest to classify because they lack unique mandatory checks and cannot easily be compared against a predefined list without a large reference database.</li>
 <li><strong>Birth dates:</strong> They can be confused with other date columns, such as ages or start dates. Defining reliable rules is difficult because valid age ranges depend on the population represented in the dataset.</li>
-<li><strong>Thresholds:</strong> Current thresholds are based on intuition and need to be validated across different datasets, considering factors such as missing values and spelling consistency.</li>
+<li><strong>Thresholds:</strong> Current thresholds are based on intuition and limited testing. They need to be validated across different datasets, considering factors such as missing values and spelling consistency.</li>
 </ol>
 </div>
 <div class="card"><h3>With More Time</h3>
 <ol>
 <li><strong>Tune thresholds:</strong> Test multiple datasets and analyze score distributions to set more reliable thresholds.</li>
-<li><strong>Explore more data examples:</strong> Investigate additional formats and edge cases, such as phone number extensions.</li>
+<li><strong>Expand the supplementary reference lists:</strong> Add more representative values and examples to the reference files to improve coverage and recognition across different datasets.</li>
 <li><strong>Add more classifiers:</strong> Expand the number of supported categories to improve coverage.</li>
 <li><strong>Expand reference databases:</strong> Build larger example datasets for comparison.</li>
 <li><strong>Test against known labels:</strong> Evaluate the classifier on datasets with known column types to identify additional failure cases.</li>
+<li><strong>Improve code efficiency:</strong> Refactor and optimize the implementation to reduce unnecessary work, improve performance, and make the code easier to maintain.</li>
 </ol>
 </div>
 </div>
