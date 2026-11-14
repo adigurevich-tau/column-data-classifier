@@ -54,10 +54,8 @@ class DetectorTests(unittest.TestCase):
             self.assertTrue(person_name.detect(value, self.resources)[0])
         self.assertTrue(person_name.detect("Burks, Rosella", self.resources)[0])
         self.assertTrue(person_name.detect("Smith, John", self.resources)[0])
-        # These values are no longer rejected as placeholders; they are checked
-        # only against the normal person-name structure.
-        for value in ("Unknown", "Anonymous", "Test User"):
-            self.assertTrue(person_name.detect(value, self.resources)[0])
+        for value in ("Unknown", "Anonymous", "N/A", "Test User"):
+            self.assertFalse(person_name.detect(value, self.resources)[0])
         for value in ("N/A", "A", "John  Smith", "John_ Smith",
                       "Burks,, Rosella", ", Rosella", "Burks, "):
             self.assertFalse(person_name.detect(value, self.resources)[0])
